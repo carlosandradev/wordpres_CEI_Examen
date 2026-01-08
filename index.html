@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador WordPress CEI - Versión Final Pro</title>
+    <title>Simulador WordPress CEI - Examen Final</title>
     <style>
         :root { --primary: #2271b1; --success: #00a32a; --error: #d63638; --bg: #f0f0f1; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 100px; }
@@ -78,6 +78,7 @@
     <button class="fab-finish" onclick="finishExam()">FINALIZAR Y CORREGIR TODO</button>
 
 <script>
+
   const DB = [
         // --- BÁSICOS WORDPRESS ---
         { q: "¿Cuál es la diferencia principal entre una Entrada (Post) y una Página?", o: ["No hay diferencia", "Las Entradas son para noticias (cronológicas) y las Páginas para contenido estático (Quiénes somos)", "Las Páginas no admiten fotos", "Las Entradas son para vender"], a: 1, e: "Pregunta clásica. Entradas = Blog/Noticias. Páginas = Estructura fija de la web." },
@@ -189,7 +190,6 @@
         { q: "¿Qué es un 'iframe'?", o: ["Una ventana para incrustar contenido de otra web (ej: YouTube)", "Una imagen", "Un virus", "Un menú"], a: 0, e: "La forma estándar de poner mapas o vídeos externos." },
         { q: "Si cambias de tema, ¿pierdes tus entradas?", o: ["Sí", "No, el contenido sigue en la base de datos, solo cambia el diseño", "Solo las fotos", "A veces"], a: 1, e: "El contenido y el diseño están separados." }
     ];
-    
 
     // VARIABLES DE ESTADO
     let questions = []; 
@@ -273,7 +273,7 @@
         updateProgress();
     };
 
-    // 2. CORRECCIÓN FINAL CON TUS BAREMOS
+    // 2. CORRECCIÓN FINAL CON TUS BAREMOS EXACTOS
     window.finishExam = function() {
         clearInterval(timer);
 
@@ -307,16 +307,16 @@
         let mensaje = "";
         let color = "";
 
-        if (totalAciertos >= 45) {
+        if (totalAciertos >= 45) { // 45 a 50
             mensaje = "SOBRESALIENTE 🏆";
             color = "#00a32a"; // Verde fuerte
-        } else if (totalAciertos >= 40) {
+        } else if (totalAciertos >= 40) { // 40 a 44
             mensaje = "NOTABLE 🌟";
             color = "#2271b1"; // Azul WP
-        } else if (totalAciertos >= 35) {
+        } else if (totalAciertos >= 35) { // 35 a 39
             mensaje = "BIEN 👍";
             color = "#2271b1";
-        } else if (totalAciertos >= 30) {
+        } else if (totalAciertos >= 30) { // 30 a 34
             mensaje = "APTO 👌";
             color = "#e6a800"; // Naranja
         } else {
