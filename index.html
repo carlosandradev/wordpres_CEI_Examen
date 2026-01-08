@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7.0</title>
+    <title>8.0</title>
     <style>
         :root { --primary: #2271b1; --success: #28a745; --error: #dc3545; --bg: #f0f0f1; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 100px; }
@@ -161,7 +161,7 @@
         { q: "¿Qué define la 'Jerarquía de Plantillas' de WordPress?", o: ["El orden de los menús", "La lógica por la que WordPress decide qué archivo del tema usar para mostrar contenido", "La estructura de la base de datos", "Los roles de usuario"], a: 1, e: "Ejemplo: si no existe category.php, usa archive.php, y si no, index.php." },
         { q: "¿Para qué se utiliza un 'Sidebar' tradicionalmente?", o: ["Para el menú principal", "Para mostrar widgets (buscadores, categorías) en el lateral del blog", "Para el pie de página", "Para la imagen destacada"], a: 1, e: "Es el área de widgets clásica, aunque su uso ha disminuido con los maquetadores." },
         { q: "¿Qué característica define a una 'Categoría' frente a una etiqueta?", o: ["Es plana", "Es jerárquica (admite subcategorías)", "Es obligatoria para páginas", "No se puede borrar"], a: 1, e: "La jerarquía permite organizar el contenido en niveles." },
-        { q: "¿Qué lenguaje de programación se ejecuta en el servidor para hacer funcionar WordPress?", o: ["HTML", "PHP", "JavaScript", "Python"], a: 1, e: "WordPress está escrito en PHP y necesita un servidor compatible para correr." }
+        { q: "¿Qué lenguaje de programación se ejecuta en el servidor para hacer funcionar WordPress?", o: ["HTML", "PHP", "JavaScript", "Python"], a: 1, e: "WordPress está escrito en PHP y necesita un servidor compatible para correr." },
         // --- WORDPRESS TÉCNICO Y CORE ---
         { q: "Si al migrar una web manualmente las imágenes no cargan y los enlaces dan error, ¿qué dos campos debes revisar prioritariamente en la tabla 'wp_options'?", o: ["'admin_email' y 'blogname'", "'siteurl' y 'home'", "'active_plugins' y 'template'", "'site_address' y 'wp_url'"], a: 1, e: "Son las dos URLs que definen dónde busca WordPress sus archivos y enlaces." },
         { q: "¿Qué ocurre exactamente a nivel de servidor cuando guardas los cambios en 'Ajustes > Enlaces Permanentes'?", o: ["Se actualiza la base de datos de posts", "Se regenera el archivo .htaccess con las reglas de reescritura", "Se borra la caché del navegador del usuario", "Se optimizan las tablas de la base de datos"], a: 1, e: "Es la solución estándar para errores 404 porque reescribe las reglas de Apache." },
@@ -241,6 +241,13 @@
         container.innerHTML = ""; 
         
         questions.forEach((q, index) => {
+            // --- FIX: Añadir comprobación para evitar errores si una pregunta no tiene opciones ---
+            if (!q.o || !Array.isArray(q.o)) {
+                console.error(`Pregunta #${index} omitida por no tener opciones válidas.`, q);
+                return; // Saltar esta pregunta
+            }
+            // --- FIN DEL FIX ---
+
             let html = `
                 <div class="card" id="card-${index}">
                     <div class="q-text"><span style="color:#2271b1; font-weight:800;">#${index + 1}</span> ${q.q}</div>
