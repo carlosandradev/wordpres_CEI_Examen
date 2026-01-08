@@ -8,17 +8,14 @@
         :root { --primary: #2271b1; --success: #00a32a; --error: #d63638; --bg: #f0f0f1; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 100px; }
         
-        /* HEADER FIJO */
         .header { position: fixed; top: 0; left: 0; right: 0; background: #fff; border-bottom: 1px solid #c3c4c7; padding: 10px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .logo { font-weight: 700; color: var(--primary); font-size: 1.2rem; }
         .timer-box { font-variant-numeric: tabular-nums; font-size: 1.5rem; font-weight: 600; color: #1d2327; }
         .pause-btn { background: #f6f7f7; border: 1px solid #2271b1; color: #2271b1; padding: 5px 15px; cursor: pointer; border-radius: 3px; font-weight: 600; transition: 0.2s; }
         .pause-btn:hover { background: #f0f0f1; }
 
-        /* CONTENEDOR */
         .container { max-width: 800px; margin: 80px auto 20px; padding: 0 15px; }
 
-        /* TARJETAS DE PREGUNTA */
         .card { background: #fff; border: 1px solid #c3c4c7; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); position: relative; }
         .q-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; line-height: 1.4; }
         
@@ -26,12 +23,10 @@
         .option-label:hover { background: #f6f7f7; border-color: var(--primary); }
         .option-label input { margin-top: 4px; transform: scale(1.2); cursor: pointer; }
 
-        /* ESTADOS DE RESPUESTA */
         .option-label.correct { background: #edfaef; border-color: var(--success); color: #005c1e; }
         .option-label.wrong { background: #fcf0f1; border-color: var(--error); color: #8a2424; text-decoration: line-through; }
         .explanation-box { display: none; margin-top: 15px; padding: 12px; background: #f0f0f1; border-left: 4px solid #72aee6; font-size: 0.95rem; }
         
-        /* BOTONES */
         .check-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 0.9rem; margin-top: 10px; }
         .check-btn:hover { background: #135e96; }
         .check-btn:disabled { background: #a7aaad; cursor: default; }
@@ -39,13 +34,11 @@
         .fab-finish { position: fixed; bottom: 20px; right: 20px; background: var(--error); color: white; padding: 15px 30px; border-radius: 50px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 999; transition: transform 0.2s; }
         .fab-finish:hover { transform: scale(1.05); background: #b32d2e; }
 
-        /* MODALES */
         .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; color: white; text-align: center; }
         .modal-content { background: white; color: #333; padding: 40px; border-radius: 8px; max-width: 500px; width: 90%; text-align: center; }
-        .score-big { font-size: 4rem; font-weight: 800; margin: 10px 0; color: var(--primary); }
+        .score-big { font-size: 3rem; font-weight: 800; margin: 10px 0; color: var(--primary); }
         .btn-restart { background: var(--success); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 20px; }
         
-        /* BARRA PROGRESO */
         .progress-bar { position: fixed; top: 60px; left: 0; height: 5px; background: #ddd; width: 100%; z-index: 999; }
         .progress-fill { height: 100%; background: #00a0d2; width: 0%; transition: width 0.3s; }
     </style>
@@ -60,8 +53,8 @@
     <div id="results-modal" class="modal">
         <div class="modal-content">
             <h2>Resultado Final</h2>
-            <div id="score-display" class="score-big">0.0</div>
-            <p id="score-msg" style="font-size: 1.2rem;"></p>
+            <div id="score-display" class="score-big">0</div>
+            <p id="score-msg" style="font-size: 1.5rem; font-weight:bold;"></p>
             <div style="text-align:left; margin-top:20px; background:#f0f0f1; padding:15px; border-radius:5px;">
                 <p>✅ Aciertos: <span id="res-correct">0</span></p>
                 <p>❌ Fallos: <span id="res-wrong">0</span></p>
@@ -85,21 +78,25 @@
     <button class="fab-finish" onclick="finishExam()">FINALIZAR Y CORREGIR TODO</button>
 
 <script>
-    // --- BASE DE DATOS CORREGIDA (120 PREGUNTAS) ---
-    const DB = [
-        // --- BLOQUE 1: CONCEPTOS BÁSICOS DE WORDPRESS (Lo esencial) ---
+  const DB = [
+        // --- BÁSICOS WORDPRESS ---
         { q: "¿Cuál es la diferencia principal entre una Entrada (Post) y una Página?", o: ["No hay diferencia", "Las Entradas son para noticias (cronológicas) y las Páginas para contenido estático (Quiénes somos)", "Las Páginas no admiten fotos", "Las Entradas son para vender"], a: 1, e: "Pregunta clásica. Entradas = Blog/Noticias. Páginas = Estructura fija de la web." },
         { q: "¿Qué es un Plugin?", o: ["Un diseño", "Una herramienta que instalas para añadir nuevas funciones a WordPress (como un formulario o tienda)", "Un virus", "La base de datos"], a: 1, e: "Son como las apps de tu móvil: añaden funcionalidades extra." },
         { q: "¿Qué es un Tema (Theme)?", o: ["La apariencia visual de la web (diseño, colores, tipografía)", "El panel de control", "Un tipo de usuario", "El hosting"], a: 0, e: "Es el encargado de definir cómo se 've' tu web." },
-        { q: "¿Para qué sirve la Biblioteca de Medios?", o: ["Para guardar plugins", "Para gestionar todas las imágenes, vídeos y documentos subidos", "Para ver los comentarios", "Para editar código"], a: 1, e: "Todo archivo que subes a la web va aquí." },
         { q: "Si quieres que tu web NO aparezca en Google mientras la estás creando, ¿qué marcas?", o: ["Nada, Google no entra", "La casilla 'Disuadir a los motores de búsqueda' en Ajustes > Lectura", "Borras la web", "Pones una contraseña al ordenador"], a: 1, e: "Muy importante acordarse de desmarcarla al terminar el proyecto." },
         { q: "¿Dónde se cambia el Título del Sitio y la Descripción Corta?", o: ["En Apariencia > Menús", "En Ajustes > Generales", "En Plugins", "En Usuarios"], a: 1, e: "Es la configuración básica de identidad de tu WordPress." },
         { q: "¿Qué es el 'Slug'?", o: ["Un virus", "La parte final de la URL que identifica una página (ej: miweb.com/contacto)", "El dominio", "El título"], a: 1, e: "Debe ser corto, en minúsculas y sin espacios." },
         { q: "¿Qué estructura de Enlaces Permanentes es la mejor para el SEO?", o: ["Simple (?p=123)", "Nombre de la entrada (Post name)", "Numérico", "Mes y nombre"], a: 1, e: "Ayuda a Google y a los usuarios a entender de qué va la página solo leyendo el enlace." },
         { q: "¿Qué rol de usuario tiene acceso a TODO (instalar plugins, cambiar temas, crear usuarios)?", o: ["Editor", "Autor", "Administrador", "Colaborador"], a: 2, e: "Es el rol que tienes tú como creador de la web." },
-        { q: "¿Cómo se llama el archivo donde se guardan los datos de conexión a la base de datos?", o: ["index.php", "wp-admin.php", "wp-config.php", "style.css"], a: 2, e: "Pregunta de examen de Rafa. Es el archivo de configuración vital." },
+        { q: "¿Cómo se llama el archivo donde se guardan los datos de conexión a la base de datos?", o: ["index.php", "wp-admin.php", "wp-config.php", "style.css"], a: 2, e: "Es el archivo de configuración vital." },
+        { q: "Si quieres que tu página de inicio sea una página estática (ej: Home) y no el blog, ¿dónde lo configuras?", o: ["En Ajustes > Lectura", "En Apariencia > Personalizar", "En Ajustes > Generales", "En Entradas"], a: 0, e: "Debes cambiar 'Tu página de inicio muestra' de 'Tus últimas entradas' a 'Una página estática'." },
+        { q: "¿Para qué sirve la 'Imagen Destacada' de una entrada?", o: ["Es la imagen que sale dentro del texto", "Es la portada del post que se ve en los listados y al compartir en redes", "Es el fondo de la web", "Es el logo"], a: 1, e: "Es la imagen representativa principal, distinta a las que insertas en el contenido." },
+        { q: "¿Qué ocurre si cambias la visibilidad de una entrada a 'Privada'?", o: ["Nadie puede verla", "Solo pueden verla los Administradores y Editores conectados", "Se borra de Google", "Pide contraseña"], a: 1, e: "Es útil para contenido interno o borradores que necesitan revisión." },
+        { q: "¿Cómo se llama la función que permite recuperar una versión anterior de un post si te equivocas?", o: ["Copias de seguridad", "Revisiones", "Control Z", "Papelera"], a: 1, e: "WordPress guarda autoguardados y versiones anteriores en la barra lateral del editor." },
+        { q: "¿Qué es la 'Edición Rápida' en el listado de entradas?", o: ["Un plugin", "Una opción para cambiar título, slug, categoría o estado sin entrar al editor", "Una forma de escribir más rápido", "No existe"], a: 1, e: "Ahorra mucho tiempo para cambios menores de gestión." },
+        { q: "Si borras una página por error, ¿dónde va?", o: ["Se elimina para siempre", "A la Papelera (se puede recuperar durante 30 días)", "Al servidor", "Al correo"], a: 1, e: "Funciona igual que la papelera de reciclaje de tu ordenador." },
 
-        // --- BLOQUE 2: ELEMENTOR (Diseño Visual) ---
+        // --- ELEMENTOR ---
         { q: "¿Para qué sirve el 'Navegador' (Navigator) en Elementor?", o: ["Para entrar en Google", "Es un panel de capas para ver y seleccionar secciones fácilmente", "Para ver el mapa", "Para guardar"], a: 1, e: "Fundamental cuando tienes elementos superpuestos o no encuentras una sección." },
         { q: "¿Qué diferencia hay entre Margen (Margin) y Relleno (Padding)?", o: ["Son iguales", "Margen es espacio FUERA del borde (separa elementos), Relleno es espacio DENTRO (separa contenido del borde)", "Al revés", "Solo sirven para texto"], a: 1, e: "Margen separa cajas entre sí. Relleno hace la caja más grande por dentro." },
         { q: "¿Qué es el 'Modo Responsive' en Elementor?", o: ["Un modo rápido", "La herramienta para adaptar el diseño a Móvil y Tablet", "Un plugin", "Un error"], a: 1, e: "Te permite cambiar tamaños de letra o márgenes solo para el móvil." },
@@ -108,36 +105,65 @@
         { q: "¿Para qué sirve el Z-Index?", o: ["Para el zoom", "Para decidir qué elemento se ve encima de otro (capas)", "Para el color", "Para el borde"], a: 1, e: "Cuanto mayor es el número, más 'arriba' está el elemento." },
         { q: "¿Cómo arreglas que el menú tape el título de una sección al hacer clic en un enlace (ancla)?", o: ["Borrando el menú", "Usando la opción 'Desplazamiento de ancla' (Offset)", "Con margen negativo", "No tiene arreglo"], a: 1, e: "Compensa la altura del menú fijo." },
         { q: "¿Qué es un 'Global Color'?", o: ["Un color mundial", "Un color guardado en ajustes que, si lo cambias, se actualiza en toda la web", "Un fondo", "Un error"], a: 1, e: "Esencial para cambiar la identidad corporativa rápidamente." },
-        { q: "¿Qué widget usas para poner un mapa de Google?", o: ["Imagen", "Google Maps", "Video", "Editor de texto"], a: 1, e: "Viene por defecto en Elementor." },
-        { q: "Si un cambio de estilo no se ve en la web pero sí en el editor, ¿qué suele ser?", o: ["Virus", "Problema de Caché (del navegador o plugin)", "Base de datos rota", "Falta pagar"], a: 1, e: "Borrar caché o 'Regenerar CSS' suele solucionarlo." },
+        { q: "¿Qué diferencia hay entre 'Elementor Canvas' y 'Elementor Ancho Completo'?", o: ["Ninguna", "Canvas borra cabecera y pie (lienzo en blanco); Ancho Completo mantiene cabecera/pie del tema", "Canvas es para pintar", "Ancho Completo es más lento"], a: 1, e: "Canvas es ideal para Landing Pages." },
+        { q: "¿Cómo copias el estilo (color, fuente) de un widget a otro rápidamente?", o: ["No se puede", "Clic derecho > Copiar, y en el otro Clic derecho > Pegar Estilo", "Anotando los códigos", "Usando un plugin"], a: 1, e: "Ahorra tener que configurar cada widget manualmente." },
+        { q: "¿Para qué sirve el 'Historial' (icono de reloj) en Elementor?", o: ["Para ver la hora", "Para deshacer cambios recientes (acciones) o volver a versiones guardadas anteriormente", "Para ver quién visita la web", "Para medir tiempos"], a: 1, e: "Tu salvavidas si rompes el diseño y quieres volver atrás." },
+        { q: "¿Qué es un 'Divisor de Forma' (Shape Divider)?", o: ["Una línea", "Formas decorativas (olas, curvas, nubes) que se ponen arriba o abajo de una sección", "Un error", "Un widget de texto"], a: 1, e: "Recurso de diseño muy usado para transiciones suaves." },
+        { q: "Si quieres que un elemento aparezca con una animación al hacer scroll, ¿dónde vas?", o: ["Estilo > Tipografía", "Avanzado > Efectos de movimiento > Animación de entrada", "Contenido", "Ajustes del sitio"], a: 1, e: "Fade In, Slide Up, Zoom In, etc." },
+        { q: "¿Qué significa el icono de escritorio/tablet/móvil junto a una propiedad en Elementor?", o: ["Que solo funciona en escritorio", "Que puedes definir valores distintos para cada dispositivo (Responsive)", "Que es de pago", "Nada"], a: 1, e: "Ejemplo: Tamaño de letra 50px en PC y 20px en Móvil." },
+        { q: "¿Qué es una 'Etiqueta Dinámica' (Dynamic Tag) en Elementor Pro?", o: ["Una etiqueta HTML", "Una función para que un widget muestre datos variables de la DB (ej: Título del Post) en vez de texto fijo", "Un error", "Un plugin"], a: 1, e: "La base para crear plantillas que se rellenan solas." },
 
-        // --- BLOQUE 3: WOOCOMMERCE (Tienda) ---
-        { q: "¿Qué tipo de producto usas para vender una camiseta con tallas S, M y L?", o: ["Producto Simple", "Producto Variable", "Producto Virtual", "Producto Externo"], a: 1, e: "Permite crear variaciones, cada una con su stock y precio si quieres." },
+        // --- WOOCOMMERCE ---
+        { q: "¿Qué tipo de producto usas para vender una camiseta con tallas S, M y L?", o: ["Producto Simple", "Producto Variable", "Producto Virtual", "Producto Externo"], a: 1, e: "Permite crear variaciones, cada una con su stock y precio." },
         { q: "Si vendes un servicio o un PDF (algo que no se envía en caja), ¿qué casilla marcas?", o: ["Virtual", "Físico", "Agrupado", "Externo"], a: 0, e: "Al marcar 'Virtual', desaparecen los costes de envío en el carrito." },
         { q: "¿Qué estado de pedido significa que el pago ha sido correcto?", o: ["Pendiente de pago", "Cancelado", "Procesando", "En espera"], a: 2, e: "Significa que el dinero ha llegado y debes preparar el pedido." },
         { q: "¿Para qué sirve una 'Zona de Envío'?", o: ["Para saber dónde está el almacén", "Para definir precios de envío distintos según el lugar (ej: Península vs Canarias)", "Para el mapa", "Para los impuestos"], a: 1, e: "Permite cobrar portes diferentes según el destino." },
         { q: "¿Dónde se gestionan los pedidos recibidos?", o: ["En Entradas", "En WooCommerce > Pedidos", "En Productos", "En Ajustes"], a: 1, e: "Es tu bandeja de entrada de ventas." },
         { q: "¿Qué método de pago podemos usar en el curso para simular compras?", o: ["Bitcoin", "Transferencia bancaria o Contrareembolso", "Tarjeta real obligatoria", "Paypal real"], a: 1, e: "Permite probar todo el proceso de compra sin gastar dinero real." },
-        { q: "¿Qué es un Producto Agrupado?", o: ["Un pack indivisible", "Una página que muestra varios productos simples juntos (ej: colección de ropa)", "Un producto variable", "Un descuento"], a: 1, e: "El usuario puede añadir cantidades de cada sub-producto." },
         { q: "Si quieres vender productos de Amazon (Afiliados), ¿qué tipo usas?", o: ["Producto Simple", "Producto Externo/Afiliado", "Producto Variable", "Virtual"], a: 1, e: "El botón de compra lleva a la web de Amazon en vez de al carrito." },
         { q: "¿Por qué no sale la pestaña de Impuestos al principio?", o: ["Es de pago", "Hay que activarla en Ajustes > General primero", "Es un error", "No existe"], a: 1, e: "WooCommerce viene simplificado por defecto." },
         { q: "¿Qué plugin mejora los desplegables de tallas poniéndolos como botoncitos de colores?", o: ["Contact Form 7", "Variation Swatches", "Yoast", "Jetpack"], a: 1, e: "Mejora mucho la experiencia de usuario visual." },
+        { q: "¿Qué es el SKU de un producto?", o: ["El precio", "Un código único de referencia interna (Stock Keeping Unit)", "El nombre", "La imagen"], a: 1, e: "Opcional pero recomendado para inventarios grandes." },
+        { q: "¿Cómo activas el uso de Cupones de descuento?", o: ["Viene siempre activo", "En WooCommerce > Ajustes > General > Activar cupones", "En Productos", "Con un plugin extra"], a: 1, e: "Si no marcas la casilla, el campo de 'Introducir cupón' no sale en el carrito." },
+        { q: "Si quieres gestionar el stock (unidades disponibles), ¿qué marcas en el producto?", o: ["Nada", "Pestaña Inventario > Gestión de inventario", "Poner el precio", "Pestaña Envío"], a: 1, e: "Permite poner cantidad (ej: 50) y que se reste al vender." },
+        { q: "¿Qué permite la opción 'Permitir compra como invitado'?", o: ["Regalar productos", "Que los clientes compren sin tener que crearse una cuenta", "Que compren gratis", "Nada"], a: 1, e: "Reduce la fricción en el checkout y aumenta conversiones." },
+        { q: "Si un cliente pide devolución, ¿cómo se hace el Reembolso en WooCommerce?", o: ["Por transferencia manual", "Desde el propio pedido > Botón Reembolso", "Borrando el pedido", "No se puede"], a: 1, e: "Genera registros contables negativos correctos." },
+        { q: "¿Qué son los 'Productos relacionados' que salen abajo?", o: ["Publicidad", "Productos de la misma categoría o etiqueta que WC muestra automáticamente", "Productos caros", "Un error"], a: 1, e: "Ayudan a la navegación cruzada." },
 
-        // --- BLOQUE 4: HERRAMIENTAS Y PLUGINS FAMOSOS ---
-        { q: "¿Qué es 'LocalWP'?", o: ["Un plugin", "Un programa para crear webs en tu ordenador sin internet", "Un hosting", "Un tema"], a: 1, e: "Es donde desarrollamos las webs en el curso antes de subirlas." },
-        { q: "¿Para qué sirve el plugin 'Yoast SEO'?", o: ["Para diseñar", "Para ayudar a posicionar en Google (semáforos verde/rojo)", "Para seguridad", "Para copias"], a: 1, e: "Te dice si tu contenido es amigable para Google." },
+        // --- PLUGINS Y MANTENIMIENTO ---
+        { q: "¿Qué es 'LocalWP'?", o: ["Un plugin", "Un programa para crear webs en tu ordenador sin internet", "Un hosting", "Un tema"], a: 1, e: "Es donde desarrollamos las webs en el curso." },
+        { q: "¿Para qué sirve el plugin 'Yoast SEO'?", o: ["Para diseñar", "Para ayudar a posicionar en Google (semáforos verde/rojo)", "Para seguridad", "Para copias"], a: 1, e: "Te guía para poner títulos y descripciones que gusten a Google." },
         { q: "¿Qué hace un plugin de Copias de Seguridad (Backup)?", o: ["Borra la web", "Guarda una copia de todos los archivos y base de datos por si algo se rompe", "Traduce", "Vende"], a: 1, e: "Ejemplos: All-in-One WP Migration o Duplicator." },
         { q: "¿Para qué sirve 'Contact Form 7'?", o: ["Para crear formularios de contacto", "Para SEO", "Para tiendas", "Para seguridad"], a: 0, e: "Es el estándar clásico para formularios." },
         { q: "¿Qué hace un plugin de Seguridad como Wordfence?", o: ["Mejora el diseño", "Protege la web de ataques y virus (Firewall)", "Vende productos", "Traduce"], a: 1, e: "Bloquea intentos de acceso maliciosos." },
         { q: "¿Qué es 'Squoosh'?", o: ["Un juego", "Una web de Google para comprimir imágenes antes de subirlas", "Un plugin", "Un tema"], a: 1, e: "Clave para que las fotos pesen poco." },
         { q: "¿Qué es 'Loco Translate'?", o: ["Un traductor automático", "Un plugin para traducir textos técnicos del tema (ej: 'Read more' -> 'Leer más')", "Un mapa", "Un error"], a: 1, e: "Permite traducir las cadenas internas de WordPress." },
-        { q: "¿Qué es un CPT (Custom Post Type)?", o: ["Un post normal", "Un tipo de contenido personalizado (ej: Proyectos, Recetas)", "Un usuario", "Un plugin"], a: 1, e: "Se usa cuando las Entradas y Páginas se quedan cortas." },
+        { q: "¿Qué es un CPT (Custom Post Type)?", o: ["Un post normal", "Un tipo de contenido personalizado (ej: Proyectos, Inmuebles, Recetas)", "Un usuario", "Un plugin"], a: 1, e: "Se usa cuando las Entradas y Páginas se quedan cortas." },
         { q: "¿Qué es un Shortcode?", o: ["Un código corto entre corchetes [ ] que invoca una función", "Un error", "Una contraseña", "Un virus"], a: 0, e: "Ejemplo: [contact-form-7 id='123']." },
-        { q: "¿Qué es el 'Lazy Load'?", o: ["Carga lenta", "Carga diferida (las imágenes cargan solo cuando bajas a verlas)", "Un error", "Un virus"], a: 1, e: "Hace que la web cargue mucho más rápido al principio." },
+        { q: "¿Qué es el 'Lazy Load'?", o: ["Carga lenta", "Carga diferida (las imágenes cargan solo cuando bajas a verlas)", "Un error", "Un virus"], a: 1, e: "Mejora la velocidad inicial de carga." },
+        { q: "¿Para qué sirve 'Akismet'?", o: ["Para SEO", "Para filtrar el SPAM en los comentarios y formularios", "Para diseñar", "Para copias"], a: 1, e: "Viene preinstalado en WordPress." },
+        { q: "¿Qué hace el plugin 'Redirection'?", o: ["Redirige usuarios", "Gestiona redirecciones 301 y monitoriza errores 404 automáticamente", "Borra la web", "Crea menús"], a: 1, e: "Muy útil si cambias URLs antiguas por nuevas para no perder SEO." },
+        { q: "¿Qué función cumple 'Really Simple SSL'?", o: ["Pone el candado", "Fuerza la web a cargar en HTTPS y arregla contenido mixto automáticamente", "Crea certificados", "Nada"], a: 1, e: "Solución rápida para errores de seguridad básicos." },
+        { q: "¿Qué hace 'Smush' o 'Imagify'?", o: ["Crea galerías", "Comprimen y optimizan las imágenes automáticamente al subirlas", "Borran fotos", "Ponen marcas de agua"], a: 1, e: "WPO: Ahorran espacio y mejoran velocidad." },
+        { q: "¿Qué es 'Cookie Notice' o 'CookieYes'?", o: ["Un plugin de cocina", "Añade el banner de consentimiento de cookies para cumplir la ley", "Borra cookies", "Rastrea usuarios"], a: 1, e: "Obligatorio para cumplimiento legal en Europa." },
 
-        // --- BLOQUE 5: CONCEPTOS GENERALES (Hosting, Dominios, Legal) ---
-        { q: "¿Qué es el Hosting?", o: ["El nombre de la web", "El espacio en un servidor donde se guardan tus archivos (la casa)", "El diseño", "El navegador"], a: 1, e: "Sin hosting no hay web online." },
-        { q: "¿Qué es el Dominio?", o: ["El hosting", "La dirección de la web (ej: google.com)", "El diseño", "El código"], a: 1, e: "Es lo que escribes en la barra del navegador." },
+        // --- APARIENCIA Y MENÚS ---
+        { q: "¿Cómo añades un enlace personalizado (ej: a Facebook) en el menú?", o: ["No se puede", "En Apariencia > Menús > Enlaces personalizados", "Creando una página", "Con un plugin"], a: 1, e: "Permite poner URLs externas en la navegación." },
+        { q: "Si activas un tema nuevo, ¿qué pasa con los Widgets?", o: ["Se quedan igual", "A veces se mueven a 'Widgets inactivos' si las áreas cambian", "Se borran", "Se duplican"], a: 1, e: "Depende de cómo se llamen las áreas (Sidebars) en el nuevo tema." },
+        { q: "¿Dónde se cambia el logotipo de la web generalmente?", o: ["En el código", "En Apariencia > Personalizar > Identidad del sitio", "En Medios", "En Ajustes"], a: 1, e: "Es la ubicación estándar de WordPress." },
+        { q: "¿Qué es un 'Widget de pie de página'?", o: ["Un error", "Contenido que aparece en las columnas del footer (ej: Copyright, Mapa, Enlaces)", "Un menú", "Una entrada"], a: 1, e: "Se configuran en Apariencia > Widgets." },
+        { q: "Si quieres crear un menú desplegable (submenú), ¿cómo lo haces?", o: ["Con código", "En Apariencia > Menús, arrastrando un elemento ligeramente a la derecha debajo del 'padre'", "Creando carpetas", "No se puede"], a: 1, e: "La jerarquía visual crea la estructura desplegable." },
+        { q: "¿Qué pasa si editas el CSS en 'CSS Adicional'?", o: ["Se borra al actualizar WP", "Se guarda en la base de datos y se aplica sobre el tema sin riesgo", "Rompe la web", "Nada"], a: 1, e: "Es una forma segura de hacer pequeños retoques visuales." },
+
+        // --- SALUD Y CONCEPTOS GENERALES ---
+        { q: "¿Dónde puedes ver si tu WordPress tiene problemas críticos (PHP antiguo, errores)?", o: ["En el dashboard", "En Herramientas > Salud del sitio (Site Health)", "En Ajustes", "En Google"], a: 1, e: "Te da una puntuación y consejos de mejora." },
+        { q: "Si activas el 'Modo Mantenimiento', ¿qué ven los usuarios?", o: ["La web normal", "Una página de aviso (Estamos trabajando...) y no pueden navegar", "Un error 404", "Nada"], a: 1, e: "Se usa para que nadie vea la web rota mientras haces cambios grandes." },
+        { q: "Si un plugin rompe la web y no puedes entrar al admin, ¿qué haces?", o: ["Llorar", "Entrar por FTP/Hosting y renombrar la carpeta del plugin para desactivarlo", "Reinstalar todo", "Cambiar contraseña"], a: 1, e: "Truco de emergencia para recuperar el acceso." },
+        { q: "¿Qué es la 'Caché del navegador'?", o: ["Un virus", "Archivos que se guardan en el ordenador del visitante para no descargarlos de nuevo", "Una base de datos", "Un plugin"], a: 1, e: "Mejora la velocidad de carga para visitantes recurrentes." },
+        { q: "¿Qué es un 'Enlace Roto'?", o: ["Un link que lleva a una página que ya no existe (404)", "Un link feo", "Un link azul", "Un virus"], a: 1, e: "Malo para el usuario y para el SEO." },
+        { q: "¿Para qué sirve 'Regenerar miniaturas' (Regenerate Thumbnails)?", o: ["Para borrar fotos", "Para volver a crear los tamaños de imagen si cambias de tema", "Para subir calidad", "Para bajar peso"], a: 1, e: "Si las fotos se ven deformes tras cambiar de diseño, usa esto." },
+        { q: "¿Qué es el 'Hosting'?", o: ["El nombre de la web", "El espacio en un servidor donde se guardan tus archivos (la casa)", "El diseño", "El navegador"], a: 1, e: "Sin hosting no hay web online." },
+        { q: "¿Qué es el 'Dominio'?", o: ["El hosting", "La dirección de la web (ej: google.com)", "El diseño", "El código"], a: 1, e: "Es lo que escribes en la barra del navegador." },
         { q: "¿Qué es HTTPS (el candadito)?", o: ["Seguridad (conexión cifrada)", "Web lenta", "Web antigua", "Virus"], a: 0, e: "Obligatorio hoy en día para que la web sea segura." },
         { q: "¿Qué es el 'Responsive Design'?", o: ["Que la web responda rápido", "Que la web se adapte bien a móviles y tablets", "Que sea barata", "Que sea azul"], a: 1, e: "La web debe verse bien en cualquier tamaño de pantalla." },
         { q: "¿Qué es el texto ALT de una imagen?", o: ["El título", "Descripción para Google y personas ciegas", "El borde", "El pie de foto"], a: 1, e: "Importante para el SEO y la accesibilidad." },
@@ -146,92 +172,27 @@
         { q: "¿Cuál es el peso recomendado para una imagen web?", o: ["5 MB", "1 MB", "Menos de 200 KB aprox", "No importa"], a: 2, e: "Si pesan mucho, la web irá muy lenta." },
         { q: "¿Qué es un Favicon?", o: ["El logo grande", "El icono pequeñito en la pestaña del navegador", "El pie de página", "Un menú"], a: 1, e: "Ayuda a identificar la web en las pestañas abiertas." },
         { q: "¿Qué es un Mockup?", o: ["Un diseño visual (boceto) de cómo será la web antes de hacerla", "Una copia de seguridad", "Un virus", "Un código"], a: 0, e: "Se hace en Photoshop/Figma para enseñar al cliente." },
-
-        // --- BLOQUE 6: DETALLES DEL EXAMEN CEI ---
+        
+        // --- DETALLES DE CURSO Y EXAMEN (Criterios Técnicos) ---
         { q: "¿Cuántas horas mínimas de trabajo debe reflejar el proyecto?", o: ["10 horas", "40 horas", "100 horas", "1 hora"], a: 1, e: "Equivale a una semana de trabajo intensivo." },
         { q: "¿Se puede usar texto falso 'Lorem Ipsum' en el proyecto final?", o: ["Sí, en todas partes", "No, está prohibido (debe ser contenido real o realista)", "Solo en el blog", "Da igual"], a: 1, e: "El contenido es parte fundamental de la evaluación." },
-        { q: "¿Qué es obligatorio entregar junto con la URL de la web?", o: ["Nada más", "Una Memoria en PDF y una copia de seguridad", "El DNI", "Una foto"], a: 1, e: "Sin la memoria explicativa no se corrige." },
+        { q: "¿Qué es obligatorio entregar junto con la URL de la web?", o: ["Nada más", "Una Memoria en PDF y una copia de seguridad (.wpress)", "El DNI", "Una foto"], a: 1, e: "Sin la memoria explicativa no se corrige." },
         { q: "Si usas Inteligencia Artificial (IA) en el proyecto, ¿qué debes hacer?", o: ["No decir nada", "Explicarlo en la memoria (qué prompts usaste)", "Pagar un extra", "Está prohibido"], a: 1, e: "Se permite, pero siendo transparente sobre su uso." },
-        { q: "¿Qué pasa si suspendes 4 veces?", o: ["Nada", "Pierdes el derecho al diploma", "Pagas más", "Repites gratis"], a: 1, e: "Es el límite de convocatorias." },
+        { q: "¿Qué pasa si suspendes 4 veces el examen/proyecto?", o: ["Nada", "Pierdes el derecho al diploma", "Pagas más", "Repites gratis"], a: 1, e: "Es el límite de convocatorias." },
         { q: "¿Cómo se llama el editor nativo de WordPress para escribir entradas?", o: ["Classic", "Gutenberg (Editor de bloques)", "Elementor", "Divi"], a: 1, e: "Es el sistema de bloques que viene por defecto." },
-        { q: "¿Qué es la 'Jerarquía de Plantillas'?", o: ["El orden de los jefes", "Las reglas que sigue WordPress para elegir qué diseño mostrar", "Un plugin", "Un error"], a: 1, e: "Ejemplo: Si no hay diseño específico de categoría, usa el genérico." },
+        { q: "¿Qué es la 'Jerarquía de Plantillas'?", o: ["El orden de los jefes", "Las reglas que sigue WordPress para elegir qué diseño mostrar (ej: si no hay category.php, usa archive.php)", "Un plugin", "Un error"], a: 1, e: "Es la lógica interna del motor de temas." },
         { q: "¿Qué es un 'Sidebar'?", o: ["Una barra lateral donde poner widgets", "El menú superior", "El pie de página", "Un error"], a: 0, e: "Clásico en los blogs para poner categorías o buscadores." },
-        { q: "¿Qué es una 'Categoría' en el blog?", o: ["Una etiqueta", "Una forma de agrupar temas generales (ej: Deportes, Cine)", "Una página", "Un usuario"], a: 1, e: "Es jerárquica (pueden tener subcategorías)." },
-        { q: "¿Qué es una 'Etiqueta' (Tag)?", o: ["Una categoría", "Una palabra clave específica para describir un post", "Un menú", "Un plugin"], a: 1, e: "No tienen jerarquía, son detalles puntuales." }
-        { q: "Si quieres que tu página de inicio sea una página estática (ej: Home) y no el blog, ¿dónde lo configuras?", o: ["En Ajustes > Lectura", "En Apariencia > Personalizar", "En Ajustes > Generales", "En Entradas"], a: 0, e: "Debes cambiar 'Tu página de inicio muestra' de 'Tus últimas entradas' a 'Una página estática'." },
-        { q: "¿Para qué sirve la 'Imagen Destacada' de una entrada?", o: ["Es la imagen que sale dentro del texto", "Es la portada del post que se ve en los listados y al compartir en redes", "Es el fondo de la web", "Es el logo"], a: 1, e: "Es la imagen representativa principal, distinta a las que insertas en el contenido." },
-        { q: "¿Qué ocurre si cambias la visibilidad de una entrada a 'Privada'?", o: ["Nadie puede verla", "Solo pueden verla los Administradores y Editores conectados", "Se borra de Google", "Pide contraseña"], a: 1, e: "Es útil para contenido interno o borradores que necesitan revisión." },
-        { q: "¿Cómo se llama la función que permite recuperar una versión anterior de un post si te equivocas?", o: ["Copias de seguridad", "Revisiones", "Control Z", "Papelera"], a: 1, e: "WordPress guarda autoguardados y versiones anteriores en la barra lateral del editor." },
-        { q: "¿Qué es la 'Edición Rápida' en el listado de entradas?", o: ["Un plugin", "Una opción para cambiar título, slug, categoría o estado sin entrar al editor", "Una forma de escribir más rápido", "No existe"], a: 1, e: "Ahorra mucho tiempo para cambios menores de gestión." },
-        { q: "¿Dónde se cambia la zona horaria y el formato de fecha de la web?", o: ["En el servidor", "En Ajustes > Generales", "En Usuarios", "En el Tema"], a: 1, e: "Importante para que las entradas programadas salgan a la hora correcta." },
-        { q: "Si borras una página por error, ¿dónde va?", o: ["Se elimina para siempre", "A la Papelera (se puede recuperar durante 30 días)", "Al servidor", "Al correo"], a: 1, e: "Funciona igual que la papelera de reciclaje de tu ordenador." },
-        { q: "¿Qué diferencia hay entre 'Borrador' y 'Pendiente de revisión'?", o: ["Ninguna", "Borrador es privado; Pendiente avisa a un editor para que lo apruebe antes de publicar", "Pendiente es para borrar", "Borrador es público"], a: 1, e: "Parte del flujo de trabajo editorial de WordPress." },
-        { q: "¿Para qué sirven las 'Opciones de Pantalla' (pestaña arriba a la derecha)?", o: ["Para cambiar el color", "Para mostrar/ocultar cajas del panel (ej: ocultar campos personalizados o comentarios)", "Para salir", "Para ver la web"], a: 1, e: "Permite limpiar la interfaz del admin de cosas que no usas." },
-        { q: "Si quieres fijar una entrada para que salga siempre la primera en el blog, ¿qué opción usas?", o: ["Publicar inmediatamente", "Fijar a la parte superior del blog (Sticky post)", "Cambiar la fecha", "Ponerle muchas etiquetas"], a: 1, e: "Altera el orden cronológico normal poniendo esa entrada en el foco." },
-
-        // --- BLOQUE 2: ELEMENTOR (USO PRÁCTICO) ---
-        { q: "¿Qué diferencia hay entre 'Elementor Canvas' y 'Elementor Ancho Completo' en Estructura de Página?", o: ["Ninguna", "Canvas borra cabecera y pie (lienzo en blanco); Ancho Completo mantiene cabecera/pie del tema", "Canvas es para pintar", "Ancho Completo es más lento"], a: 1, e: "Canvas es ideal para Landing Pages donde no quieres menú de navegación." },
-        { q: "¿Cómo copias el estilo (color, fuente) de un widget a otro rápidamente?", o: ["No se puede", "Clic derecho > Copiar, y en el otro Clic derecho > Pegar Estilo", "Anotando los códigos", "Usando un plugin"], a: 1, e: "Ahorra tener que configurar cada widget manualmente uno por uno." },
-        { q: "¿Para qué sirve el 'Historial' (icono de reloj) en Elementor?", o: ["Para ver la hora", "Para deshacer cambios recientes (acciones) o volver a versiones guardadas anteriormente", "Para ver quién visita la web", "Para medir tiempos"], a: 1, e: "Tu salvavidas si rompes el diseño y quieres volver atrás." },
-        { q: "¿Qué es un 'Divisor de Forma' (Shape Divider)?", o: ["Una línea", "Formas decorativas (olas, curvas, nubes) que se ponen arriba o abajo de una sección", "Un error", "Un widget de texto"], a: 1, e: "Recurso de diseño muy usado para transiciones suaves entre secciones." },
-        { q: "Si quieres que un elemento aparezca con una animación al hacer scroll, ¿dónde vas?", o: ["Estilo > Tipografía", "Avanzado > Efectos de movimiento > Animación de entrada", "Contenido", "Ajustes del sitio"], a: 1, e: "Fade In, Slide Up, Zoom In, etc." },
-        { q: "¿Qué significa el icono de escritorio/tablet/móvil junto a una propiedad en Elementor?", o: ["Que solo funciona en escritorio", "Que puedes definir valores distintos para cada dispositivo (Responsive)", "Que es de pago", "Nada"], a: 1, e: "Ejemplo: Tamaño de letra 50px en PC y 20px en Móvil." },
-        { q: "¿Qué es una 'Etiqueta Dinámica' (Dynamic Tag) en Elementor Pro?", o: ["Una etiqueta HTML", "Una función para que un widget muestre datos variables de la DB (ej: Título del Post) en vez de texto fijo", "Un error", "Un plugin"], a: 1, e: "La base para crear plantillas que se rellenan solas." },
-        { q: "¿Para qué sirve la opción 'Ocultar en móvil' en la pestaña Avanzado > Adaptabilidad?", o: ["Para borrar el elemento", "Para que ese elemento no se cargue o no se vea cuando el usuario entra desde un teléfono", "Para hacerlo más pequeño", "Para moverlo"], a: 1, e: "Útil cuando una sección es muy grande para pantallas pequeñas." },
-        { q: "Si quieres guardar una sección que has diseñado para usarla en otra página, ¿qué haces?", o: ["Hacer una foto", "Clic derecho en la sección > Guardar como plantilla", "Copiar el código HTML", "No se puede"], a: 1, e: "Se guarda en 'Mis Plantillas' y puedes insertarla donde quieras." },
-        { q: "¿Qué es el 'Modo Seguro' de Elementor?", o: ["Un antivirus", "Un modo de carga que aísla Elementor de temas y plugins para solucionar errores de carga", "Un diseño feo", "Una copia"], a: 1, e: "Se activa cuando Elementor no consigue cargar el editor." },
-
-        // --- BLOQUE 3: WOOCOMMERCE (GESTIÓN DE TIENDA) ---
-        { q: "¿Qué es el SKU de un producto?", o: ["El precio", "Un código único de referencia interna (Stock Keeping Unit) para identificar el producto", "El nombre", "La imagen"], a: 1, e: "Opcional pero recomendado para inventarios grandes." },
-        { q: "¿Cómo activas el uso de Cupones de descuento?", o: ["Viene siempre activo", "En WooCommerce > Ajustes > General > Activar cupones", "En Productos", "Con un plugin extra"], a: 1, e: "Si no marcas la casilla, el campo de 'Introducir cupón' no sale en el carrito." },
-        { q: "¿Qué diferencia hay entre la 'Imagen del producto' y la 'Galería del producto'?", o: ["Ninguna", "La Imagen es la principal (portada); la Galería son las fotos adicionales", "La Galería es para el blog", "La Imagen es pequeña"], a: 1, e: "La imagen principal es la que se ve en el catálogo." },
-        { q: "Si quieres gestionar el stock (unidades disponibles), ¿qué marcas en el producto?", o: ["Nada", "Pestaña Inventario > Gestión de inventario (track stock)", "Poner el precio", "Pestaña Envío"], a: 1, e: "Permite poner cantidad (ej: 50) y que se reste al vender." },
-        { q: "¿Qué permite la opción 'Permitir compra como invitado' en Ajustes > Cuentas?", o: ["Regalar productos", "Que los clientes compren sin tener que crearse una cuenta y contraseña obligatoria", "Que compren gratis", "Nada"], a: 1, e: "Reduce la fricción en el checkout y aumenta conversiones." },
-        { q: "¿Dónde configuras los correos a los que llegan los avisos de 'Nuevo Pedido'?", o: ["En tu Gmail", "En WooCommerce > Ajustes > Correos electrónicos", "En el producto", "En Usuarios"], a: 1, e: "Por defecto va al admin, pero puedes poner al encargado del almacén." },
-        { q: "¿Qué es una 'Nota del pedido'?", o: ["Un post-it", "Un sistema para añadir información interna o enviar mensajes al cliente dentro del pedido", "Un error", "Una factura"], a: 1, e: "Útil para enviar el número de seguimiento manual al cliente." },
-        { q: "Si un cliente pide devolución, ¿cómo se hace el Reembolso en WooCommerce?", o: ["Por transferencia manual", "Desde el propio pedido > Botón Reembolso (automático si la pasarela lo permite o manual)", "Borrando el pedido", "No se puede"], a: 1, e: "Genera registros contables negativos correctos." },
-        { q: "¿Qué son los 'Productos relacionados' que salen abajo?", o: ["Publicidad", "Productos de la misma categoría o etiqueta que WC muestra automáticamente", "Productos caros", "Un error"], a: 1, e: "Ayudan a la navegación cruzada." },
-        { q: "¿Dónde se asigna la página que actuará como 'Tienda', 'Carrito' y 'Mi cuenta'?", o: ["Se hace solo", "En WooCommerce > Ajustes > Avanzado", "En Apariencia", "En Plugins"], a: 1, e: "Si borras esas páginas por error, debes volver a asignarlas aquí." },
-
-        // --- BLOQUE 4: PLUGINS Y FUNCIONALIDADES ESPECÍFICAS ---
-        { q: "¿Para qué sirve 'Akismet'?", o: ["Para SEO", "Para filtrar el SPAM en los comentarios y formularios", "Para diseñar", "Para copias"], a: 1, e: "Viene preinstalado en WordPress." },
-        { q: "¿Qué hace el plugin 'Redirection'?", o: ["Redirige usuarios", "Gestiona redirecciones 301 y monitoriza errores 404 automáticamente", "Borra la web", "Crea menús"], a: 1, e: "Muy útil si cambias URLs antiguas por nuevas para no perder SEO." },
-        { q: "¿Para qué sirve un plugin de SMTP (como WP Mail SMTP)?", o: ["Para diseñar correos", "Para asegurar que los emails de WordPress llegan a la bandeja de entrada y no a Spam", "Para escribir posts", "Para vender"], a: 1, e: "Conecta WP con un servicio de correo real (Gmail, Sendgrid, etc)." },
-        { q: "¿Qué función cumple 'Really Simple SSL'?", o: ["Pone el candado", "Fuerza la web a cargar en HTTPS y arregla contenido mixto automáticamente", "Crea certificados", "Nada"], a: 1, e: "Solución rápida para errores de seguridad básicos." },
-        { q: "¿Qué es 'UpdraftPlus'?", o: ["Un plugin de diseño", "Un plugin popular para hacer y restaurar copias de seguridad en la nube (Drive/Dropbox)", "Un tema", "Un editor"], a: 1, e: "Alternativa a All-in-One Migration." },
-        { q: "¿Para qué sirve 'WPS Hide Login'?", o: ["Para no poder entrar", "Para cambiar la URL de acceso '/wp-admin' por otra secreta (ej: '/mi-entrada')", "Para cambiar la contraseña", "Para el diseño"], a: 1, e: "Medida de seguridad para evitar ataques de fuerza bruta." },
-        { q: "¿Qué hace 'Smush' o 'Imagify'?", o: ["Crea galerías", "Comprimen y optimizan las imágenes automáticamente al subirlas", "Borran fotos", "Ponen marcas de agua"], a: 1, e: "WPO: Ahorran espacio y mejoran velocidad." },
-        { q: "¿Qué plugin es necesario para crear Campos Personalizados (ej: Fecha de estreno, Director)?", o: ["ACF (Advanced Custom Fields)", "Contact Form 7", "Yoast", "WooCommerce"], a: 0, e: "Permite añadir datos extra a los posts que WP no trae por defecto." },
-        { q: "¿Para qué sirve 'Duplicator'?", o: ["Para duplicar posts", "Para clonar la web entera y moverla de un servidor a otro (Migración)", "Para duplicar fotos", "Para copiar textos"], a: 1, e: "Crea un paquete instalador completo." },
-        { q: "¿Qué es 'Cookie Notice' o 'CookieYes'?", o: ["Un plugin de cocina", "Añade el banner de consentimiento de cookies para cumplir la ley", "Borra cookies", "Rastrea usuarios"], a: 1, e: "Obligatorio para cumplimiento legal en Europa." },
-
-        // --- BLOQUE 5: APARIENCIA Y MENÚS ---
-        { q: "¿Cómo añades un enlace personalizado (ej: a Facebook) en el menú?", o: ["No se puede", "En Apariencia > Menús > Enlaces personalizados", "Creando una página", "Con un plugin"], a: 1, e: "Permite poner URLs externas en la navegación." },
-        { q: "Si activas un tema nuevo, ¿qué pasa con los Widgets?", o: ["Se quedan igual", "A veces se mueven a 'Widgets inactivos' si las áreas cambian", "Se borran", "Se duplican"], a: 1, e: "Depende de cómo se llamen las áreas (Sidebars) en el nuevo tema." },
-        { q: "¿Dónde se cambia el logotipo de la web generalmente?", o: ["En el código", "En Apariencia > Personalizar > Identidad del sitio (o en las opciones del tema)", "En Medios", "En Ajustes"], a: 1, e: "Es la ubicación estándar de WordPress." },
-        { q: "¿Qué es un 'Widget de pie de página'?", o: ["Un error", "Contenido que aparece en las columnas del footer (ej: Copyright, Mapa, Enlaces)", "Un menú", "Una entrada"], a: 1, e: "Se configuran en Apariencia > Widgets." },
-        { q: "¿Qué es la 'Imagen de cabecera'?", o: ["El logo", "Una imagen grande que algunos temas muestran arriba del todo", "El favicon", "El fondo"], a: 1, e: "Característica clásica de temas de WordPress." },
-        { q: "Si quieres crear un menú desplegable (submenú), ¿cómo lo haces?", o: ["Con código", "En Apariencia > Menús, arrastrando un elemento ligeramente a la derecha debajo del 'padre'", "Creando carpetas", "No se puede"], a: 1, e: "La jerarquía visual crea la estructura desplegable." },
-        { q: "¿Qué es la ubicación del menú 'Principal' o 'Primario'?", o: ["El menú del admin", "El lugar donde el tema muestra la navegación principal (normalmente arriba)", "El footer", "La barra lateral"], a: 1, e: "Debes asignar tu menú a esta ubicación para que se vea." },
-        { q: "¿Qué es el 'Fondo' en Personalizar?", o: ["El color o imagen que se ve detrás de todo el contenido de la web", "El logo", "El footer", "El header"], a: 1, e: "Afecta al <body> del sitio." },
-        { q: "¿Qué es un 'Tema Hijo' (Child Theme) Configurator?", o: ["Un plugin que crea el tema hijo por ti sin tocar código", "Un editor", "Un diseño", "Un virus"], a: 1, e: "Facilita la creación de la estructura carpeta/style.css/functions.php." },
-        { q: "¿Qué pasa si editas el CSS en 'CSS Adicional'?", o: ["Se borra al actualizar WP", "Se guarda en la base de datos y se aplica sobre el tema", "Rompe la web", "Nada"], a: 1, e: "Es una forma segura de hacer pequeños retoques visuales." },
-
-        // --- BLOQUE 6: SALUD DEL SITIO Y MANTENIMIENTO ---
-        { q: "¿Dónde puedes ver si tu WordPress tiene problemas críticos (PHP antiguo, errores)?", o: ["En el dashboard", "En Herramientas > Salud del sitio (Site Health)", "En Ajustes", "En Google"], a: 1, e: "Te da una puntuación y consejos de mejora." },
-        { q: "¿Por qué es importante actualizar los Plugins?", o: ["Para tener colores nuevos", "Por seguridad (parches) y nuevas funcionalidades", "Para gastar espacio", "No es importante"], a: 1, e: "Los plugins desactualizados son la principal entrada de hackeos." },
-        { q: "Si activas el 'Modo Mantenimiento', ¿qué ven los usuarios?", o: ["La web normal", "Una página de aviso (Estamos trabajando...) y no pueden navegar", "Un error 404", "Nada"], a: 1, e: "Se usa para que nadie vea la web rota mientras haces cambios grandes." },
-        { q: "¿Qué significa que un plugin sea 'Compatible' con tu versión de WP?", o: ["Que funciona bien y el autor lo ha probado", "Que es gratis", "Que es de pago", "Que es bonito"], a: 1, e: "Siempre revisa esto antes de instalar para evitar errores." },
-        { q: "Si un plugin rompe la web y no puedes entrar al admin, ¿qué haces?", o: ["Llorar", "Entrar por FTP/Hosting y renombrar la carpeta del plugin para desactivarlo a la fuerza", "Reinstalar todo", "Cambiar contraseña"], a: 1, e: "Truco de emergencia para recuperar el acceso." },
-        { q: "¿Qué es la 'Caché del navegador'?", o: ["Un virus", "Archivos que se guardan en el ordenador del visitante para no descargarlos de nuevo", "Una base de datos", "Un plugin"], a: 1, e: "Hacer que dure más tiempo mejora la puntuación en PageSpeed." },
-        { q: "¿Qué es un 'Enlace Roto'?", o: ["Un link que lleva a una página que ya no existe (404)", "Un link feo", "Un link azul", "Un virus"], a: 1, e: "Malo para el usuario y para el SEO." },
-        { q: "¿Para qué sirve 'Regenerar miniaturas' (Regenerate Thumbnails)?", o: ["Para borrar fotos", "Para volver a crear los tamaños de imagen si cambias de tema", "Para subir calidad", "Para bajar peso"], a: 1, e: "Si las fotos se ven deformes tras cambiar de diseño, usa esto." },
-        { q: "¿Qué es el 'Spam' en comentarios?", o: ["Comentarios basura/publicidad automática", "Comentarios buenos", "Emails", "Usuarios"], a: 0, e: "Hay que borrarlos o usar Akismet." },
-        { q: "¿Qué es la versión de PHP?", o: ["El diseño", "La versión del lenguaje del servidor (ej: 7.4, 8.0). Debe estar actualizada para velocidad y seguridad", "El plugin", "El tema"], a: 1, e: "WordPress corre sobre PHP; si es viejo, WP irá lento." }
+        { q: "¿Qué es una 'Categoría' en el blog?", o: ["Una etiqueta", "Una forma de agrupar temas generales (ej: Deportes, Cine) de forma jerárquica", "Una página", "Un usuario"], a: 1, e: "Es jerárquica (pueden tener subcategorías)." },
+        { q: "¿Qué es una 'Etiqueta' (Tag)?", o: ["Una categoría", "Una palabra clave específica para describir un post sin jerarquía", "Un menú", "Un plugin"], a: 1, e: "No tienen jerarquía, son detalles puntuales." },
+        { q: "¿Qué es 'MySQL'?", o: ["La base de datos donde se guarda todo el contenido de texto y configuración", "El diseño", "El servidor", "Un plugin"], a: 0, e: "Es donde WordPress escribe tus posts y ajustes." },
+        { q: "¿Qué es 'PHP'?", o: ["Un diseño", "El lenguaje de programación con el que está hecho WordPress", "Una imagen", "Un plugin"], a: 1, e: "Se ejecuta en el servidor para generar la web." },
+        { q: "¿Qué es un 'iframe'?", o: ["Una ventana para incrustar contenido de otra web (ej: YouTube)", "Una imagen", "Un virus", "Un menú"], a: 0, e: "La forma estándar de poner mapas o vídeos externos." },
+        { q: "Si cambias de tema, ¿pierdes tus entradas?", o: ["Sí", "No, el contenido sigue en la base de datos, solo cambia el diseño", "Solo las fotos", "A veces"], a: 1, e: "El contenido y el diseño están separados." }
     ];
+    
 
     // VARIABLES DE ESTADO
-    let questions = []; // Las 50 seleccionadas
+    let questions = []; 
     let userAnswers = {};
     let timer;
     let timeLeft = 45 * 60; // 45 min
@@ -239,23 +200,23 @@
 
     // INICIALIZACIÓN
     function init() {
+        if(typeof DB === 'undefined') return alert("Falta pegar las preguntas");
+        
         // 1. Barajar y coger 50
         questions = DB.sort(() => 0.5 - Math.random()).slice(0, 50);
         
         // 2. Renderizar
         const container = document.getElementById('quiz-container');
-        container.innerHTML = ""; // Limpiar
+        container.innerHTML = ""; 
         
         questions.forEach((q, index) => {
-            // Crear HTML de la pregunta
             let html = `
                 <div class="card" id="card-${index}">
                     <div class="q-text">${index + 1}. ${q.q}</div>
                     <div class="options-group">
             `;
             
-            let indices = q.o.map((_, i) => i); // [0, 1, 2, 3]
-            // indices.sort(() => 0.5 - Math.random()); // Descomentar para barajar opciones
+            let indices = q.o.map((_, i) => i);
 
             indices.forEach(i => {
                 html += `
@@ -275,16 +236,13 @@
             container.innerHTML += html;
         });
 
-        // 3. Iniciar Timer
         startTimer();
     }
 
-    // --- LÓGICA DE CORRECCIÓN HÍBRIDA ---
-
-    // 1. Función para comprobar UNA pregunta individual (Botón azul)
+    // 1. Función para comprobar UNA pregunta individual
     window.check = function(index) {
         const selected = document.querySelector(`input[name="q_${index}"]:checked`);
-        if (!selected) return alert("Por favor, selecciona una opción antes de comprobar.");
+        if (!selected) return alert("Selecciona una opción antes de comprobar.");
 
         const val = parseInt(selected.value);
         const correct = questions[index].a;
@@ -293,17 +251,14 @@
         const btn = card.querySelector('.check-btn');
         const expBox = document.getElementById(`exp-${index}`);
         
-        // Guardar
         userAnswers[index] = (val === correct);
 
-        // Bloquear
         const inputs = card.querySelectorAll('input');
         inputs.forEach(inp => inp.disabled = true);
         btn.disabled = true;
         btn.textContent = "Revisado";
         btn.style.background = "#a7aaad";
 
-        // Feedback
         if (val === correct) {
             document.getElementById(`lbl-${index}-${val}`).classList.add('correct');
             expBox.innerHTML = `<strong>✅ ¡CORRECTO!</strong><br>${questions[index].e}`;
@@ -315,60 +270,74 @@
             expBox.style.borderLeftColor = "#d63638";
         }
         expBox.style.display = "block";
+        updateProgress();
     };
 
-    // 2. Función FINAL (Botón rojo flotante) - CORRIGE TODO LO PENDIENTE
+    // 2. CORRECCIÓN FINAL CON TUS BAREMOS
     window.finishExam = function() {
         clearInterval(timer);
 
+        // Recorrer todas para corregir las que falten
         questions.forEach((q, index) => {
-            // Si ya se corrigió individualmente, saltar
-            if (userAnswers.hasOwnProperty(index)) return;
+            if (userAnswers.hasOwnProperty(index)) return; // Si ya está corregida, saltar
 
             const selected = document.querySelector(`input[name="q_${index}"]:checked`);
-            
             if (selected) {
                 const val = parseInt(selected.value);
                 userAnswers[index] = (val === q.a);
-                
-                if (val !== q.a) {
-                    document.getElementById(`lbl-${index}-${val}`).classList.add('wrong');
-                }
+                // Marcar visualmente
+                if (val !== q.a) document.getElementById(`lbl-${index}-${val}`).classList.add('wrong');
                 document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct');
             } else {
-                userAnswers[index] = false; // Fallo por no responder
-                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct'); // Mostrar cuál era
+                userAnswers[index] = false; // En blanco = fallo
+                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct');
             }
             
-            // Bloquear visualmente
+            // Bloquear inputs
             const card = document.getElementById(`card-${index}`);
-            const inputs = card.querySelectorAll('input');
+            card.querySelectorAll('input').forEach(i => i.disabled = true);
             const btn = card.querySelector('.check-btn');
-            inputs.forEach(inp => inp.disabled = true);
             if(btn) btn.disabled = true;
         });
 
-        // Calcular Nota
+        // CÁLCULO DE NOTA (SEGÚN TU BAREMO)
         const totalAciertos = Object.values(userAnswers).filter(r => r === true).length;
-        const totalPreguntas = questions.length;
-        const notaFinal = (totalAciertos / totalPreguntas) * 10;
-
-        // Mostrar
-        document.getElementById('score-display').innerText = notaFinal.toFixed(1);
-        document.getElementById('res-correct').innerText = totalAciertos;
-        document.getElementById('res-wrong').innerText = totalPreguntas - totalAciertos;
+        const totalFallos = questions.length - totalAciertos;
         
-        const msg = document.getElementById('score-msg');
-        if (notaFinal >= 5) {
-            msg.innerHTML = "<strong style='color:#00a32a'>¡ENHORABUENA, HAS APROBADO! 🎉</strong>";
+        let mensaje = "";
+        let color = "";
+
+        if (totalAciertos >= 45) {
+            mensaje = "SOBRESALIENTE 🏆";
+            color = "#00a32a"; // Verde fuerte
+        } else if (totalAciertos >= 40) {
+            mensaje = "NOTABLE 🌟";
+            color = "#2271b1"; // Azul WP
+        } else if (totalAciertos >= 35) {
+            mensaje = "BIEN 👍";
+            color = "#2271b1";
+        } else if (totalAciertos >= 30) {
+            mensaje = "APTO 👌";
+            color = "#e6a800"; // Naranja
         } else {
-            msg.innerHTML = "<strong style='color:#d63638'>HAS SUSPENDIDO. NECESITAS REPASAR. 📚</strong>";
+            mensaje = "NO APTO / SUSPENSO ❌";
+            color = "#d63638"; // Rojo
         }
 
+        // Mostrar
+        document.getElementById('score-display').innerText = totalAciertos + " / 50";
+        document.getElementById('score-display').style.color = color;
+        
+        const msgEl = document.getElementById('score-msg');
+        msgEl.innerText = mensaje;
+        msgEl.style.color = color;
+
+        document.getElementById('res-correct').innerText = totalAciertos;
+        document.getElementById('res-wrong').innerText = totalFallos;
+        
         document.getElementById('result-modal').style.display = 'flex';
     };
 
-    // TIMER
     function startTimer() {
         timer = setInterval(() => {
             if(!isPaused) {
@@ -386,7 +355,17 @@
         document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
     };
 
-    init();
+    function updateProgress() {
+        const total = 50;
+        const current = Object.keys(userAnswers).length;
+        document.getElementById('q-count').innerText = `(${current}/${total})`;
+        document.getElementById('progress').style.width = `${(current/total)*100}%`;
+    }
+
+    // Esperar a que se cargue la DB antes de iniciar
+    window.onload = function() {
+        if(typeof DB !== 'undefined') init();
+    };
 
 </script>
 </body>
