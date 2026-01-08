@@ -3,85 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador WordPress CEI - Examen Final</title>
+    <title>Examen Oficial WordPress CEI</title>
     <style>
-        :root { --primary: #2271b1; --success: #00a32a; --error: #d63638; --bg: #f0f0f1; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 100px; }
+        :root { --primary: #2271b1; --success: #d4edda; --success-text: #155724; --error: #f8d7da; --error-text: #721c24; --bg: #f0f0f1; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 120px; }
         
-        .header { position: fixed; top: 0; left: 0; right: 0; background: #fff; border-bottom: 1px solid #c3c4c7; padding: 10px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .logo { font-weight: 700; color: var(--primary); font-size: 1.2rem; }
-        .timer-box { font-variant-numeric: tabular-nums; font-size: 1.5rem; font-weight: 600; color: #1d2327; }
-        .pause-btn { background: #f6f7f7; border: 1px solid #2271b1; color: #2271b1; padding: 5px 15px; cursor: pointer; border-radius: 3px; font-weight: 600; transition: 0.2s; }
-        .pause-btn:hover { background: #f0f0f1; }
-
-        .container { max-width: 800px; margin: 80px auto 20px; padding: 0 15px; }
-
-        .card { background: #fff; border: 1px solid #c3c4c7; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); position: relative; }
-        .q-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; line-height: 1.4; }
+        /* HEADER */
+        .header { position: fixed; top: 0; left: 0; right: 0; background: #fff; border-bottom: 1px solid #c3c4c7; padding: 15px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .logo { font-weight: 800; color: #135e96; font-size: 1.2rem; text-transform: uppercase; }
+        .timer-box { font-variant-numeric: tabular-nums; font-size: 1.4rem; font-weight: 700; color: #1d2327; background: #f0f0f1; padding: 5px 15px; border-radius: 4px; }
         
-        .option-label { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid #dcdcde; border-radius: 4px; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
-        .option-label:hover { background: #f6f7f7; border-color: var(--primary); }
-        .option-label input { margin-top: 4px; transform: scale(1.2); cursor: pointer; }
+        /* LAYOUT */
+        .container { max-width: 800px; margin: 100px auto 20px; padding: 0 20px; }
 
-        .option-label.correct { background: #edfaef; border-color: var(--success); color: #005c1e; }
-        .option-label.wrong { background: #fcf0f1; border-color: var(--error); color: #8a2424; text-decoration: line-through; }
-        .explanation-box { display: none; margin-top: 15px; padding: 12px; background: #f0f0f1; border-left: 4px solid #72aee6; font-size: 0.95rem; }
+        /* TARJETAS */
+        .card { background: #fff; border: 1px solid #c3c4c7; padding: 25px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative; }
+        .q-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; color: #1d2327; }
         
-        .check-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 0.9rem; margin-top: 10px; }
-        .check-btn:hover { background: #135e96; }
-        .check-btn:disabled { background: #a7aaad; cursor: default; }
-
-        .fab-finish { position: fixed; bottom: 20px; right: 20px; background: var(--error); color: white; padding: 15px 30px; border-radius: 50px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 999; transition: transform 0.2s; }
-        .fab-finish:hover { transform: scale(1.05); background: #b32d2e; }
-
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; color: white; text-align: center; }
-        .modal-content { background: white; color: #333; padding: 40px; border-radius: 8px; max-width: 500px; width: 90%; text-align: center; }
-        .score-big { font-size: 3rem; font-weight: 800; margin: 10px 0; color: var(--primary); }
-        .btn-restart { background: var(--success); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 20px; }
+        /* OPCIONES */
+        .option-label { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border: 2px solid #f0f0f1; border-radius: 6px; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
+        .option-label:hover { background: #f6f7f7; border-color: #2271b1; }
+        .option-label input { margin-top: 5px; transform: scale(1.3); cursor: pointer; accent-color: #2271b1; }
         
-        .progress-bar { position: fixed; top: 60px; left: 0; height: 5px; background: #ddd; width: 100%; z-index: 999; }
-        .progress-fill { height: 100%; background: #00a0d2; width: 0%; transition: width 0.3s; }
+        /* ESTADOS DE CORRECCIÓN (Solo visibles al final) */
+        .card.correct-card { border-left: 6px solid #28a745; }
+        .card.wrong-card { border-left: 6px solid #dc3545; }
+
+        .option-label.correct-answer { background: var(--success) !important; border-color: #c3e6cb !important; color: var(--success-text); font-weight: 600; }
+        .option-label.user-wrong { background: var(--error) !important; border-color: #f5c6cb !important; color: var(--error-text); text-decoration: line-through; opacity: 0.8; }
+        
+        .explanation-box { display: none; margin-top: 20px; padding: 15px; background: #fff; border-top: 1px solid #eee; font-size: 0.95rem; color: #50575e; }
+        .explanation-box strong { display: block; margin-bottom: 5px; }
+
+        /* BOTÓN FINAL */
+        .fab-finish { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #d63638; color: white; padding: 15px 40px; border-radius: 50px; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(214, 54, 56, 0.4); z-index: 999; transition: transform 0.2s; white-space: nowrap; }
+        .fab-finish:hover { transform: translateX(-50%) scale(1.05); background: #b32d2e; }
+
+        /* MODAL RESULTADOS */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; text-align: center; }
+        .modal-content { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); max-width: 500px; width: 90%; border: 1px solid #ddd; }
+        
+        .score-circle { width: 150px; height: 150px; background: #2271b1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 800; margin: 0 auto 20px; box-shadow: 0 5px 15px rgba(34, 113, 177, 0.3); }
+        .verdict { font-size: 2rem; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
+        .stats { display: flex; justify-content: space-around; margin: 20px 0; background: #f9f9f9; padding: 15px; border-radius: 8px; }
+        .stat-item span { display: block; font-weight: bold; font-size: 1.2rem; }
+        .stat-item label { font-size: 0.85rem; text-transform: uppercase; color: #666; }
+
+        .btn-restart { background: #135e96; color: white; border: none; padding: 15px 30px; font-size: 1.1rem; cursor: pointer; border-radius: 6px; width: 100%; margin-top: 10px; font-weight: 600; }
+        .btn-restart:hover { background: #0a4b78; }
+
+        /* Progress Bar */
+        .progress-container { position: fixed; top: 69px; left: 0; width: 100%; height: 4px; background: #e0e0e0; z-index: 998; }
+        .progress-bar { height: 100%; background: #2271b1; width: 0%; transition: width 0.3s; }
+
     </style>
 </head>
 <body>
 
-    <div id="pause-modal" class="modal">
-        <h1>EXAMEN PAUSADO</h1>
-        <button class="pause-btn" onclick="togglePause()" style="font-size:1.5rem; padding: 20px 40px; background:white; border:none;">REANUDAR</button>
-    </div>
-
-    <div id="results-modal" class="modal">
+    <div id="result-modal" class="modal">
         <div class="modal-content">
-            <h2>Resultado Final</h2>
-            <div id="score-display" class="score-big">0</div>
-            <p id="score-msg" style="font-size: 1.5rem; font-weight:bold;"></p>
-            <div style="text-align:left; margin-top:20px; background:#f0f0f1; padding:15px; border-radius:5px;">
-                <p>✅ Aciertos: <span id="res-correct">0</span></p>
-                <p>❌ Fallos: <span id="res-wrong">0</span></p>
-                <p>⚪ Sin responder: <span id="res-blank">0</span></p>
+            <h2 style="margin-top:0; color:#444;">RESULTADO FINAL</h2>
+            
+            <div id="score-circle" class="score-circle">0</div>
+            <div id="verdict-text" class="verdict">APTO</div>
+            
+            <div class="stats">
+                <div class="stat-item"><span id="res-correct" style="color:#28a745">0</span><label>Aciertos</label></div>
+                <div class="stat-item"><span id="res-wrong" style="color:#dc3545">0</span><label>Fallos</label></div>
+                <div class="stat-item"><span id="res-blank" style="color:#666">0</span><label>En Blanco</label></div>
             </div>
+
+            <p style="color:#666; font-size:0.9rem;">Se han calificado 50 preguntas.</p>
             <button class="btn-restart" onclick="location.reload()">GENERAR NUEVO EXAMEN</button>
         </div>
     </div>
 
     <header class="header">
-        <div class="logo">Examen WP (50 Preguntas)</div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <div class="timer-box" id="timer">45:00</div>
-            <button class="pause-btn" onclick="togglePause()">II PAUSA</button>
-        </div>
+        <div class="logo">SIMULADOR WP</div>
+        <div class="timer-box" id="timer">45:00</div>
     </header>
-    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+    <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
 
-    <div class="container" id="quiz-container"></div>
+    <div class="container" id="quiz-container">
+        </div>
 
-    <button class="fab-finish" onclick="finishExam()">FINALIZAR Y CORREGIR TODO</button>
+    <button class="fab-finish" onclick="finishExam()">FINALIZAR Y VER NOTA</button>
 
 <script>
-
-  const DB = [
-        // --- BÁSICOS WORDPRESS ---
-        { q: "¿Cuál es la diferencia principal entre una Entrada (Post) y una Página?", o: ["No hay diferencia", "Las Entradas son para noticias (cronológicas) y las Páginas para contenido estático (Quiénes somos)", "Las Páginas no admiten fotos", "Las Entradas son para vender"], a: 1, e: "Pregunta clásica. Entradas = Blog/Noticias. Páginas = Estructura fija de la web." },
+    // --- POOL DE PREGUNTAS (120 - NIVEL MEDIO/TÉCNICO) ---
+    const DB = [
+        // BLOQUE 1: CONCEPTOS BÁSICOS
+        { q: "¿Cuál es la diferencia principal entre una Entrada (Post) y una Página?", o: ["No hay diferencia", "Las Entradas son para noticias (cronológicas) y las Páginas para contenido estático (Quiénes somos)", "Las Páginas no admiten fotos", "Las Entradas son para vender"], a: 1, e: "Entradas = Blog/Noticias. Páginas = Estructura fija de la web." },
         { q: "¿Qué es un Plugin?", o: ["Un diseño", "Una herramienta que instalas para añadir nuevas funciones a WordPress (como un formulario o tienda)", "Un virus", "La base de datos"], a: 1, e: "Son como las apps de tu móvil: añaden funcionalidades extra." },
         { q: "¿Qué es un Tema (Theme)?", o: ["La apariencia visual de la web (diseño, colores, tipografía)", "El panel de control", "Un tipo de usuario", "El hosting"], a: 0, e: "Es el encargado de definir cómo se 've' tu web." },
         { q: "Si quieres que tu web NO aparezca en Google mientras la estás creando, ¿qué marcas?", o: ["Nada, Google no entra", "La casilla 'Disuadir a los motores de búsqueda' en Ajustes > Lectura", "Borras la web", "Pones una contraseña al ordenador"], a: 1, e: "Muy importante acordarse de desmarcarla al terminar el proyecto." },
@@ -97,7 +109,7 @@
         { q: "¿Qué es la 'Edición Rápida' en el listado de entradas?", o: ["Un plugin", "Una opción para cambiar título, slug, categoría o estado sin entrar al editor", "Una forma de escribir más rápido", "No existe"], a: 1, e: "Ahorra mucho tiempo para cambios menores de gestión." },
         { q: "Si borras una página por error, ¿dónde va?", o: ["Se elimina para siempre", "A la Papelera (se puede recuperar durante 30 días)", "Al servidor", "Al correo"], a: 1, e: "Funciona igual que la papelera de reciclaje de tu ordenador." },
 
-        // --- ELEMENTOR ---
+        // BLOQUE 2: ELEMENTOR
         { q: "¿Para qué sirve el 'Navegador' (Navigator) en Elementor?", o: ["Para entrar en Google", "Es un panel de capas para ver y seleccionar secciones fácilmente", "Para ver el mapa", "Para guardar"], a: 1, e: "Fundamental cuando tienes elementos superpuestos o no encuentras una sección." },
         { q: "¿Qué diferencia hay entre Margen (Margin) y Relleno (Padding)?", o: ["Son iguales", "Margen es espacio FUERA del borde (separa elementos), Relleno es espacio DENTRO (separa contenido del borde)", "Al revés", "Solo sirven para texto"], a: 1, e: "Margen separa cajas entre sí. Relleno hace la caja más grande por dentro." },
         { q: "¿Qué es el 'Modo Responsive' en Elementor?", o: ["Un modo rápido", "La herramienta para adaptar el diseño a Móvil y Tablet", "Un plugin", "Un error"], a: 1, e: "Te permite cambiar tamaños de letra o márgenes solo para el móvil." },
@@ -114,7 +126,7 @@
         { q: "¿Qué significa el icono de escritorio/tablet/móvil junto a una propiedad en Elementor?", o: ["Que solo funciona en escritorio", "Que puedes definir valores distintos para cada dispositivo (Responsive)", "Que es de pago", "Nada"], a: 1, e: "Ejemplo: Tamaño de letra 50px en PC y 20px en Móvil." },
         { q: "¿Qué es una 'Etiqueta Dinámica' (Dynamic Tag) en Elementor Pro?", o: ["Una etiqueta HTML", "Una función para que un widget muestre datos variables de la DB (ej: Título del Post) en vez de texto fijo", "Un error", "Un plugin"], a: 1, e: "La base para crear plantillas que se rellenan solas." },
 
-        // --- WOOCOMMERCE ---
+        // BLOQUE 3: WOOCOMMERCE
         { q: "¿Qué tipo de producto usas para vender una camiseta con tallas S, M y L?", o: ["Producto Simple", "Producto Variable", "Producto Virtual", "Producto Externo"], a: 1, e: "Permite crear variaciones, cada una con su stock y precio." },
         { q: "Si vendes un servicio o un PDF (algo que no se envía en caja), ¿qué casilla marcas?", o: ["Virtual", "Físico", "Agrupado", "Externo"], a: 0, e: "Al marcar 'Virtual', desaparecen los costes de envío en el carrito." },
         { q: "¿Qué estado de pedido significa que el pago ha sido correcto?", o: ["Pendiente de pago", "Cancelado", "Procesando", "En espera"], a: 2, e: "Significa que el dinero ha llegado y debes preparar el pedido." },
@@ -131,7 +143,7 @@
         { q: "Si un cliente pide devolución, ¿cómo se hace el Reembolso en WooCommerce?", o: ["Por transferencia manual", "Desde el propio pedido > Botón Reembolso", "Borrando el pedido", "No se puede"], a: 1, e: "Genera registros contables negativos correctos." },
         { q: "¿Qué son los 'Productos relacionados' que salen abajo?", o: ["Publicidad", "Productos de la misma categoría o etiqueta que WC muestra automáticamente", "Productos caros", "Un error"], a: 1, e: "Ayudan a la navegación cruzada." },
 
-        // --- PLUGINS Y MANTENIMIENTO ---
+        // BLOQUE 4: PLUGINS Y MANTENIMIENTO
         { q: "¿Qué es 'LocalWP'?", o: ["Un plugin", "Un programa para crear webs en tu ordenador sin internet", "Un hosting", "Un tema"], a: 1, e: "Es donde desarrollamos las webs en el curso." },
         { q: "¿Para qué sirve el plugin 'Yoast SEO'?", o: ["Para diseñar", "Para ayudar a posicionar en Google (semáforos verde/rojo)", "Para seguridad", "Para copias"], a: 1, e: "Te guía para poner títulos y descripciones que gusten a Google." },
         { q: "¿Qué hace un plugin de Copias de Seguridad (Backup)?", o: ["Borra la web", "Guarda una copia de todos los archivos y base de datos por si algo se rompe", "Traduce", "Vende"], a: 1, e: "Ejemplos: All-in-One WP Migration o Duplicator." },
@@ -148,7 +160,7 @@
         { q: "¿Qué hace 'Smush' o 'Imagify'?", o: ["Crea galerías", "Comprimen y optimizan las imágenes automáticamente al subirlas", "Borran fotos", "Ponen marcas de agua"], a: 1, e: "WPO: Ahorran espacio y mejoran velocidad." },
         { q: "¿Qué es 'Cookie Notice' o 'CookieYes'?", o: ["Un plugin de cocina", "Añade el banner de consentimiento de cookies para cumplir la ley", "Borra cookies", "Rastrea usuarios"], a: 1, e: "Obligatorio para cumplimiento legal en Europa." },
 
-        // --- APARIENCIA Y MENÚS ---
+        // BLOQUE 5: APARIENCIA Y MENÚS
         { q: "¿Cómo añades un enlace personalizado (ej: a Facebook) en el menú?", o: ["No se puede", "En Apariencia > Menús > Enlaces personalizados", "Creando una página", "Con un plugin"], a: 1, e: "Permite poner URLs externas en la navegación." },
         { q: "Si activas un tema nuevo, ¿qué pasa con los Widgets?", o: ["Se quedan igual", "A veces se mueven a 'Widgets inactivos' si las áreas cambian", "Se borran", "Se duplican"], a: 1, e: "Depende de cómo se llamen las áreas (Sidebars) en el nuevo tema." },
         { q: "¿Dónde se cambia el logotipo de la web generalmente?", o: ["En el código", "En Apariencia > Personalizar > Identidad del sitio", "En Medios", "En Ajustes"], a: 1, e: "Es la ubicación estándar de WordPress." },
@@ -156,7 +168,7 @@
         { q: "Si quieres crear un menú desplegable (submenú), ¿cómo lo haces?", o: ["Con código", "En Apariencia > Menús, arrastrando un elemento ligeramente a la derecha debajo del 'padre'", "Creando carpetas", "No se puede"], a: 1, e: "La jerarquía visual crea la estructura desplegable." },
         { q: "¿Qué pasa si editas el CSS en 'CSS Adicional'?", o: ["Se borra al actualizar WP", "Se guarda en la base de datos y se aplica sobre el tema sin riesgo", "Rompe la web", "Nada"], a: 1, e: "Es una forma segura de hacer pequeños retoques visuales." },
 
-        // --- SALUD Y CONCEPTOS GENERALES ---
+        // BLOQUE 6: SALUD Y GENERAL
         { q: "¿Dónde puedes ver si tu WordPress tiene problemas críticos (PHP antiguo, errores)?", o: ["En el dashboard", "En Herramientas > Salud del sitio (Site Health)", "En Ajustes", "En Google"], a: 1, e: "Te da una puntuación y consejos de mejora." },
         { q: "Si activas el 'Modo Mantenimiento', ¿qué ven los usuarios?", o: ["La web normal", "Una página de aviso (Estamos trabajando...) y no pueden navegar", "Un error 404", "Nada"], a: 1, e: "Se usa para que nadie vea la web rota mientras haces cambios grandes." },
         { q: "Si un plugin rompe la web y no puedes entrar al admin, ¿qué haces?", o: ["Llorar", "Entrar por FTP/Hosting y renombrar la carpeta del plugin para desactivarlo", "Reinstalar todo", "Cambiar contraseña"], a: 1, e: "Truco de emergencia para recuperar el acceso." },
@@ -174,7 +186,7 @@
         { q: "¿Qué es un Favicon?", o: ["El logo grande", "El icono pequeñito en la pestaña del navegador", "El pie de página", "Un menú"], a: 1, e: "Ayuda a identificar la web en las pestañas abiertas." },
         { q: "¿Qué es un Mockup?", o: ["Un diseño visual (boceto) de cómo será la web antes de hacerla", "Una copia de seguridad", "Un virus", "Un código"], a: 0, e: "Se hace en Photoshop/Figma para enseñar al cliente." },
         
-        // --- DETALLES DE CURSO Y EXAMEN (Criterios Técnicos) ---
+        // BLOQUE 7: DETALLES EXAMEN
         { q: "¿Cuántas horas mínimas de trabajo debe reflejar el proyecto?", o: ["10 horas", "40 horas", "100 horas", "1 hora"], a: 1, e: "Equivale a una semana de trabajo intensivo." },
         { q: "¿Se puede usar texto falso 'Lorem Ipsum' en el proyecto final?", o: ["Sí, en todas partes", "No, está prohibido (debe ser contenido real o realista)", "Solo en el blog", "Da igual"], a: 1, e: "El contenido es parte fundamental de la evaluación." },
         { q: "¿Qué es obligatorio entregar junto con la URL de la web?", o: ["Nada más", "Una Memoria en PDF y una copia de seguridad (.wpress)", "El DNI", "Una foto"], a: 1, e: "Sin la memoria explicativa no se corrige." },
@@ -200,8 +212,6 @@
 
     // INICIALIZACIÓN
     function init() {
-        if(typeof DB === 'undefined') return alert("Falta pegar las preguntas");
-        
         // 1. Barajar y coger 50
         questions = DB.sort(() => 0.5 - Math.random()).slice(0, 50);
         
@@ -229,7 +239,6 @@
 
             html += `
                     </div>
-                    <button class="check-btn" onclick="check(${index})">Comprobar</button>
                     <div class="explanation-box" id="exp-${index}"></div>
                 </div>
             `;
@@ -237,104 +246,99 @@
         });
 
         startTimer();
+        
+        // Listener de progreso
+        document.querySelectorAll('input[type="radio"]').forEach(input => {
+            input.addEventListener('change', updateProgress);
+        });
     }
-
-    // 1. Función para comprobar UNA pregunta individual
-    window.check = function(index) {
-        const selected = document.querySelector(`input[name="q_${index}"]:checked`);
-        if (!selected) return alert("Selecciona una opción antes de comprobar.");
-
-        const val = parseInt(selected.value);
-        const correct = questions[index].a;
-        
-        const card = document.getElementById(`card-${index}`);
-        const btn = card.querySelector('.check-btn');
-        const expBox = document.getElementById(`exp-${index}`);
-        
-        userAnswers[index] = (val === correct);
-
-        const inputs = card.querySelectorAll('input');
-        inputs.forEach(inp => inp.disabled = true);
-        btn.disabled = true;
-        btn.textContent = "Revisado";
-        btn.style.background = "#a7aaad";
-
-        if (val === correct) {
-            document.getElementById(`lbl-${index}-${val}`).classList.add('correct');
-            expBox.innerHTML = `<strong>✅ ¡CORRECTO!</strong><br>${questions[index].e}`;
-            expBox.style.borderLeftColor = "#00a32a";
-        } else {
-            document.getElementById(`lbl-${index}-${val}`).classList.add('wrong');
-            document.getElementById(`lbl-${index}-${correct}`).classList.add('correct');
-            expBox.innerHTML = `<strong>❌ INCORRECTO.</strong><br>La correcta es la marcada en verde.<br><em>${questions[index].e}</em>`;
-            expBox.style.borderLeftColor = "#d63638";
-        }
-        expBox.style.display = "block";
-        updateProgress();
-    };
 
     // 2. CORRECCIÓN FINAL CON TUS BAREMOS EXACTOS
     window.finishExam = function() {
         clearInterval(timer);
 
-        // Recorrer todas para corregir las que falten
         questions.forEach((q, index) => {
-            if (userAnswers.hasOwnProperty(index)) return; // Si ya está corregida, saltar
-
+            const card = document.getElementById(`card-${index}`);
+            const expBox = document.getElementById(`exp-${index}`);
             const selected = document.querySelector(`input[name="q_${index}"]:checked`);
+            
+            // Lógica de corrección visual
             if (selected) {
                 const val = parseInt(selected.value);
                 userAnswers[index] = (val === q.a);
-                // Marcar visualmente
-                if (val !== q.a) document.getElementById(`lbl-${index}-${val}`).classList.add('wrong');
-                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct');
+                
+                if (val === q.a) {
+                    // Acertó
+                    document.getElementById(`lbl-${index}-${val}`).classList.add('correct-answer');
+                    card.classList.add('correct-card');
+                    expBox.innerHTML = `<strong>✅ ¡CORRECTO!</strong><br>${q.e}`;
+                } else {
+                    // Falló
+                    document.getElementById(`lbl-${index}-${val}`).classList.add('user-wrong');
+                    document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct-answer');
+                    card.classList.add('wrong-card');
+                    expBox.innerHTML = `<strong>❌ INCORRECTO</strong><br>La respuesta correcta era la marcada en verde.<br><em>${q.e}</em>`;
+                }
             } else {
-                userAnswers[index] = false; // En blanco = fallo
-                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct');
+                // En blanco
+                userAnswers[index] = false;
+                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct-answer');
+                card.classList.add('wrong-card');
+                expBox.innerHTML = `<strong>⚪ SIN RESPONDER</strong><br>La respuesta correcta era la marcada en verde.<br><em>${q.e}</em>`;
             }
             
+            expBox.style.display = "block";
+            
             // Bloquear inputs
-            const card = document.getElementById(`card-${index}`);
             card.querySelectorAll('input').forEach(i => i.disabled = true);
-            const btn = card.querySelector('.check-btn');
-            if(btn) btn.disabled = true;
         });
 
         // CÁLCULO DE NOTA (SEGÚN TU BAREMO)
         const totalAciertos = Object.values(userAnswers).filter(r => r === true).length;
         const totalFallos = questions.length - totalAciertos;
+        const totalBlank = 50 - Object.keys(userAnswers).length; // Ajuste por si el array userAnswers no se llenó
         
         let mensaje = "";
         let color = "";
+        let colorCode = "";
 
         if (totalAciertos >= 45) { // 45 a 50
             mensaje = "SOBRESALIENTE 🏆";
-            color = "#00a32a"; // Verde fuerte
+            colorCode = "#00a32a";
         } else if (totalAciertos >= 40) { // 40 a 44
             mensaje = "NOTABLE 🌟";
-            color = "#2271b1"; // Azul WP
+            colorCode = "#2271b1";
         } else if (totalAciertos >= 35) { // 35 a 39
             mensaje = "BIEN 👍";
-            color = "#2271b1";
+            colorCode = "#2271b1";
         } else if (totalAciertos >= 30) { // 30 a 34
             mensaje = "APTO 👌";
-            color = "#e6a800"; // Naranja
+            colorCode = "#e6a800";
         } else {
             mensaje = "NO APTO / SUSPENSO ❌";
-            color = "#d63638"; // Rojo
+            colorCode = "#d63638";
         }
 
-        // Mostrar
-        document.getElementById('score-display').innerText = totalAciertos + " / 50";
-        document.getElementById('score-display').style.color = color;
+        // Mostrar en Modal
+        document.getElementById('score-circle').innerText = totalAciertos;
+        document.getElementById('score-circle').style.background = colorCode;
         
-        const msgEl = document.getElementById('score-msg');
-        msgEl.innerText = mensaje;
-        msgEl.style.color = color;
+        const verdictEl = document.getElementById('verdict-text');
+        verdictEl.innerText = mensaje;
+        verdictEl.style.color = colorCode;
 
         document.getElementById('res-correct').innerText = totalAciertos;
-        document.getElementById('res-wrong').innerText = totalFallos;
+        // Fallos totales (incluye blancos) para el contador simple
+        document.getElementById('res-wrong').innerText = 50 - totalAciertos; 
         
+        // Contar blancos reales para estadística
+        let realBlanks = 0;
+        for(let i=0; i<50; i++) {
+            if(!document.querySelector(`input[name="q_${i}"]:checked`)) realBlanks++;
+        }
+        document.getElementById('res-blank').innerText = realBlanks;
+        document.getElementById('res-wrong').innerText = (50 - totalAciertos) - realBlanks; // Ajustar fallos marcados
+
         document.getElementById('result-modal').style.display = 'flex';
     };
 
@@ -357,15 +361,12 @@
 
     function updateProgress() {
         const total = 50;
-        const current = Object.keys(userAnswers).length;
-        document.getElementById('q-count').innerText = `(${current}/${total})`;
-        document.getElementById('progress').style.width = `${(current/total)*100}%`;
+        const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+        document.getElementById('progress').style.width = `${(answered/total)*100}%`;
     }
 
-    // Esperar a que se cargue la DB antes de iniciar
-    window.onload = function() {
-        if(typeof DB !== 'undefined') init();
-    };
+    // Arrancar
+    init();
 
 </script>
 </body>
