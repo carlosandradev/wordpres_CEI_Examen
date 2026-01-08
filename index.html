@@ -3,44 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Examen WordPress CEI - Versión Estable</title>
+    <title>Simulador WordPress CEI - Versión Final Pro</title>
     <style>
-        body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f1f1; margin: 0; padding-bottom: 80px; color: #333; }
+        :root { --primary: #2271b1; --success: #00a32a; --error: #d63638; --bg: #f0f0f1; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 100px; }
         
         /* HEADER FIJO */
-        .header { position: fixed; top: 0; left: 0; right: 0; background: #2271b1; color: white; padding: 10px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .timer-display { font-size: 1.5rem; font-weight: bold; font-variant-numeric: tabular-nums; }
-        .pause-btn { background: #f0ad4e; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem; color: #333; }
-        .pause-btn:hover { background: #ec971f; }
+        .header { position: fixed; top: 0; left: 0; right: 0; background: #fff; border-bottom: 1px solid #c3c4c7; padding: 10px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .logo { font-weight: 700; color: var(--primary); font-size: 1.2rem; }
+        .timer-box { font-variant-numeric: tabular-nums; font-size: 1.5rem; font-weight: 600; color: #1d2327; }
+        .pause-btn { background: #f6f7f7; border: 1px solid #2271b1; color: #2271b1; padding: 5px 15px; cursor: pointer; border-radius: 3px; font-weight: 600; transition: 0.2s; }
+        .pause-btn:hover { background: #f0f0f1; }
 
-        /* CONTENEDOR PRINCIPAL */
+        /* CONTENEDOR */
         .container { max-width: 800px; margin: 80px auto 20px; padding: 0 15px; }
-        
-        /* TARJETA DE PREGUNTA */
-        .question-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 5px solid #2271b1; }
+
+        /* TARJETAS DE PREGUNTA */
+        .card { background: #fff; border: 1px solid #c3c4c7; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--primary); box-shadow: 0 1px 2px rgba(0,0,0,0.05); position: relative; }
         .q-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; line-height: 1.4; }
         
-        /* OPCIONES */
-        .options-group { display: flex; flex-direction: column; gap: 8px; }
-        .option-label { display: flex; align-items: center; padding: 10px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
-        .option-label:hover { background-color: #f8f9fa; }
-        .option-label input { margin-right: 12px; transform: scale(1.2); }
+        .option-label { display: flex; align-items: flex-start; gap: 10px; padding: 10px; border: 1px solid #dcdcde; border-radius: 4px; cursor: pointer; transition: all 0.2s; margin-bottom: 8px; }
+        .option-label:hover { background: #f6f7f7; border-color: var(--primary); }
+        .option-label input { margin-top: 4px; transform: scale(1.2); cursor: pointer; }
 
-        /* FEEDBACK VISUAL */
-        .correct { background-color: #d4edda !important; border-color: #c3e6cb !important; color: #155724; }
-        .wrong { background-color: #f8d7da !important; border-color: #f5c6cb !important; color: #721c24; text-decoration: line-through; }
-        .explanation-box { margin-top: 15px; padding: 12px; background: #e2e3e5; border-radius: 6px; font-size: 0.9rem; display: none; border-left: 4px solid #6c757d; }
+        /* ESTADOS DE RESPUESTA */
+        .option-label.correct { background: #edfaef; border-color: var(--success); color: #005c1e; }
+        .option-label.wrong { background: #fcf0f1; border-color: var(--error); color: #8a2424; text-decoration: line-through; }
+        .explanation-box { display: none; margin-top: 15px; padding: 12px; background: #f0f0f1; border-left: 4px solid #72aee6; font-size: 0.95rem; }
         
-        /* BOTONES DE ACCIÓN */
-        .check-btn { margin-top: 15px; background: #2271b1; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 1rem; width: 100%; }
+        /* BOTONES */
+        .check-btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 0.9rem; margin-top: 10px; }
         .check-btn:hover { background: #135e96; }
-        .check-btn:disabled { background: #ccc; cursor: not-allowed; }
+        .check-btn:disabled { background: #a7aaad; cursor: default; }
 
-        /* RESULTADOS Y PAUSA */
-        #results-modal, #pause-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; flex-direction: column; color: white; text-align: center; }
-        .modal-content { background: white; color: #333; padding: 30px; border-radius: 10px; max-width: 400px; width: 90%; }
-        .btn-restart { background: #28a745; color: white; padding: 15px; border: none; border-radius: 5px; font-size: 1.1rem; cursor: pointer; margin-top: 15px; width: 100%; }
+        .fab-finish { position: fixed; bottom: 20px; right: 20px; background: var(--error); color: white; padding: 15px 30px; border-radius: 50px; border: none; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 999; transition: transform 0.2s; }
+        .fab-finish:hover { transform: scale(1.05); background: #b32d2e; }
 
+        /* MODALES */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; color: white; text-align: center; }
+        .modal-content { background: white; color: #333; padding: 40px; border-radius: 8px; max-width: 500px; width: 90%; text-align: center; }
+        .score-big { font-size: 4rem; font-weight: 800; margin: 10px 0; color: var(--primary); }
+        .btn-restart { background: var(--success); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; width: 100%; margin-top: 20px; }
+        
         /* BARRA PROGRESO */
         .progress-bar { position: fixed; top: 60px; left: 0; height: 5px; background: #ddd; width: 100%; z-index: 999; }
         .progress-fill { height: 100%; background: #00a0d2; width: 0%; transition: width 0.3s; }
@@ -48,150 +52,160 @@
 </head>
 <body>
 
-    <div id="pause-modal">
-        <h1 style="color:white">EXAMEN PAUSADO</h1>
-        <button class="pause-btn" onclick="togglePause()" style="font-size:1.2rem; padding:15px 30px;">REANUDAR</button>
+    <div id="pause-modal" class="modal">
+        <h1>EXAMEN PAUSADO</h1>
+        <button class="pause-btn" onclick="togglePause()" style="font-size:1.5rem; padding: 20px 40px; background:white; border:none;">REANUDAR</button>
     </div>
 
-    <div id="results-modal">
+    <div id="results-modal" class="modal">
         <div class="modal-content">
-            <h2>Examen Finalizado</h2>
-            <p>Tu puntuación es:</p>
-            <h1 id="final-score" style="font-size: 3rem; margin: 10px 0;">0.0</h1>
-            <p id="final-verdict"></p>
+            <h2>Resultado Final</h2>
+            <div id="score-display" class="score-big">0.0</div>
+            <p id="score-msg" style="font-size: 1.2rem;"></p>
+            <div style="text-align:left; margin-top:20px; background:#f0f0f1; padding:15px; border-radius:5px;">
+                <p>✅ Aciertos: <span id="res-correct">0</span></p>
+                <p>❌ Fallos: <span id="res-wrong">0</span></p>
+                <p>⚪ Sin responder: <span id="res-blank">0</span></p>
+            </div>
             <button class="btn-restart" onclick="location.reload()">GENERAR NUEVO EXAMEN</button>
         </div>
     </div>
 
-    <div class="header">
-        <div>WP Examen <span id="q-count" style="font-size:0.8rem; opacity:0.8;">(0/50)</span></div>
-        <div style="display:flex; gap:10px; align-items:center;">
-            <div class="timer-display" id="timer">45:00</div>
-            <button class="pause-btn" onclick="togglePause()">II</button>
+    <header class="header">
+        <div class="logo">Examen WP (50 Preguntas)</div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div class="timer-box" id="timer">45:00</div>
+            <button class="pause-btn" onclick="togglePause()">II PAUSA</button>
         </div>
-    </div>
+    </header>
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
 
-    <div class="container" id="quiz-container">
-        </div>
+    <div class="container" id="quiz-container"></div>
 
-    <div style="text-align: center; margin: 20px;">
-        <button onclick="finishExam()" style="background:#d63638; color:white; padding:15px 40px; border:none; border-radius:5px; font-size:1.1rem; cursor:pointer;">Terminar Examen Ahora</button>
-    </div>
+    <button class="fab-finish" onclick="finishExam()">FINALIZAR Y CORREGIR TODO</button>
 
 <script>
-const DB = [
-        // --- BLOQUE 1: ARQUITECTURA, CORE Y ARCHIVOS (Nivel Técnico) ---
-        { q: "Si necesitas que un Child Theme herede los estilos del padre y no lo hace automáticamente, ¿qué función debes usar en functions.php?", o: ["wp_enqueue_scripts", "import_css", "get_stylesheet_directory", "add_theme_support"], a: 0, e: "Debes encolar el estilo del padre usando wp_enqueue_scripts para asegurar la herencia correcta." },
-        { q: "¿Qué archivo es OBLIGATORIO para que WordPress reconozca un tema nuevo (además del index.php)?", o: ["functions.php", "style.css", "screenshot.png", "header.php"], a: 1, e: "style.css debe contener la cabecera con el nombre del tema (Theme Name) para que WP lo detecte." },
-        { q: "En la Jerarquía de Plantillas, si no existe 'category.php', ¿qué archivo busca WordPress inmediatamente después?", o: ["index.php", "archive.php", "page.php", "single.php"], a: 1, e: "El orden es: category-slug.php > category-id.php > category.php > archive.php > index.php." },
-        { q: "Si mueves tu WordPress de dominio y no puedes acceder al admin, ¿qué constantes debes definir en wp-config.php para forzar la nueva URL?", o: ["WP_NEWHOME y WP_NEWURL", "WP_HOME y WP_SITEURL", "RELOCATE_URL", "CHANGE_DOMAIN"], a: 1, e: "Estas dos constantes sobrescriben temporalmente los valores de la base de datos." },
-        { q: "¿Qué ocurre técnicamente cuando activas el 'Modo Depuración' (WP_DEBUG) en true?", o: ["Se muestra el log de accesos", "Se muestran los errores, avisos y advertencias de PHP en el front-end", "La web se pone en mantenimiento", "Se borra la caché"], a: 1, e: "Vital para desarrolladores. Nunca debe estar activo en una web en producción." },
-        { q: "¿Dónde se almacenan los datos serializados de los Widgets y la configuración del tema?", o: ["wp_posts", "wp_options", "wp_termmeta", "wp_users"], a: 1, e: "Por esto es peligroso hacer un 'Buscar y Reemplazar' simple en la base de datos sin herramientas que respeten la serialización." },
-        { q: "¿Qué permiso chmod es el correcto y seguro para el archivo wp-config.php?", o: ["777", "755", "644 o 600", "000"], a: 2, e: "Debe ser lo más restrictivo posible. 777 es una vulnerabilidad crítica." },
-        { q: "¿Qué función de PHP se utiliza en el header.php para cargar los estilos y scripts de los plugins?", o: ["wp_head()", "get_header()", "wp_footer()", "include_once()"], a: 0, e: "Sin la función wp_head(), ningún plugin podrá inyectar sus CSS/JS y la web se romperá." },
-        { q: "Si aparece el error 'Allowed memory size of X bytes exhausted', ¿dónde lo solucionas?", o: ["Borrando imágenes", "Aumentando el memory_limit en wp-config.php o php.ini", "Cambiando de tema", "Reinstalando WP"], a: 1, e: "Es un error común cuando un plugin pesado consume más RAM de la asignada a PHP." },
-        { q: "¿Qué es el 'Salt' en wp-config.php?", o: ["Un plugin de seguridad", "Claves de encriptación para mejorar la seguridad de las cookies de sesión", "El prefijo de la base de datos", "Una configuración de caché"], a: 1, e: "Si sospechas que te han hackeado, cambiar las Salts cierra la sesión de todos los usuarios." },
-        
-        // --- BLOQUE 2: ELEMENTOR PRO AVANZADO & CSS ---
-        { q: "Si usas CSS Personalizado en Elementor, ¿qué palabra clave selecciona el contenedor actual dinámicamente?", o: ["#this", "selector", ".elementor-item", "self"], a: 1, e: "Permite aplicar estilos solo a ese widget sin tener que asignarle una clase manual." },
-        { q: "En Elementor, ¿qué hace la opción 'Regenerar CSS y Datos'?", o: ["Borra la base de datos", "Limpia la caché interna de estilos de Elementor y regenera los archivos CSS", "Resetea el diseño", "Actualiza la licencia"], a: 1, e: "Solución #1 cuando haces cambios en el diseño y no se reflejan en la web." },
-        { q: "¿Cómo se crea una plantilla de 'Error 404' personalizada con Elementor Pro?", o: ["Creando una página normal", "Usando el Theme Builder > Error 404", "Con un plugin externo", "Editando el 404.php"], a: 1, e: "El Theme Builder permite asignar esa plantilla para que se muestre cuando una URL no existe." },
-        { q: "¿Qué condición de visualización (Display Condition) usarías para mostrar un Popup solo en entradas de la categoría 'Noticias'?", o: ["Include: Singular > All", "Include: Archives > Noticias", "Include: Singular > Entradas > In Category: Noticias", "Include: Entire Site"], a: 2, e: "Requiere especificar que es un contenido singular (post) que pertenece a una taxonomía concreta." },
-        { q: "Si tienes dos secciones con 'Sticky' (Pegajoso) activado y la segunda pasa por debajo de la primera, ¿qué falta?", o: ["Z-Index mayor en la primera", "Z-Index mayor en la segunda", "Margen negativo", "Fondo transparente"], a: 1, e: "El elemento que debe quedar encima necesita un índice de apilamiento (Z-Index) superior." },
-        { q: "¿Qué unidad de medida CSS es relativa al tamaño de la fuente del elemento raíz (html)?", o: ["em", "rem", "px", "%"], a: 1, e: "REM (Root EM) es la mejor práctica para accesibilidad y diseño responsive escalable." },
-        { q: "¿Qué es el 'Flexbox' en los Contenedores de Elementor?", o: ["Un plugin", "Un modelo de diseño CSS unidimensional para distribuir espacio entre ítems", "Una caja flexible de imagen", "Un error"], a: 1, e: "Sustituyó al sistema de secciones/columnas antiguo, permitiendo alineaciones complejas." },
-        { q: "Si un cambio de fuente (tipografía) no se aplica en el frontend pero sí en el editor, ¿qué suele ser?", o: ["Error de base de datos", "Problema de CORS o Caché del navegador/servidor", "El tema no es compatible", "Falta la licencia"], a: 1, e: "Suele ocurrir cuando las fuentes se cargan desde un dominio distinto o están cacheadas." },
-        { q: "¿Para qué sirve el widget 'Shortcode' de Elementor?", o: ["Para escribir código PHP", "Para renderizar la salida de un shortcode de otro plugin (ej: Contact Form 7)", "Para poner espacios", "Para seguridad"], a: 1, e: "Es el puente para integrar funcionalidades de plugins externos dentro del diseño visual." },
-        { q: "¿Qué hace la opción 'Layout > Overflow: Hidden' en un contenedor?", o: ["Oculta el contenedor", "Recorta cualquier contenido que se salga de los bordes del contenedor", "Hace scroll", "Oculta el menú"], a: 1, e: "Útil para evitar el scroll horizontal indeseado cuando una animación o imagen se sale del ancho." },
-
-        // --- BLOQUE 3: WOOCOMMERCE EXPERTO ---
-        { q: "En WooCommerce, ¿dónde se guardan los atributos globales de los productos en la base de datos?", o: ["wp_postmeta", "wp_options", "wp_terms, wp_termmeta y wp_term_taxonomy", "wp_woocommerce"], a: 2, e: "Los atributos funcionan técnicamente como taxonomías personalizadas." },
-        { q: "Si configuras un producto como 'Descargable', ¿cómo proteges el archivo para que no se comparta el enlace?", o: ["No se puede", "WooCommerce genera URLs únicas y forzadas por PHP para cada comprador", "Poniendo contraseña", "Usando Dropbox"], a: 1, e: "El método de descarga 'Forzar descarga' (PHP) oculta la ruta real del archivo en el servidor." },
-        { q: "¿Qué gancho (hook) usarías para añadir texto legal justo antes del botón de 'Realizar pedido'?", o: ["woocommerce_before_checkout_form", "woocommerce_review_order_before_submit", "wp_footer", "woocommerce_after_cart"], a: 1, e: "Permite inyectar contenido crítico en el último paso del checkout." },
-        { q: "Si los correos de WooCommerce no llegan al cliente, ¿cuál es la causa más probable?", o: ["WooCommerce está roto", "El servidor no tiene configurado SMTP y los correos van a SPAM", "Falta el asunto", "El cliente miente"], a: 1, e: "PHP Mail (por defecto) tiene mala reputación. Se debe usar un plugin SMTP." },
-        { q: "¿Qué diferencia real hay entre 'Cross-Sell' (Ventas cruzadas) y 'Up-Sell' (Ventas dirigidas)?", o: ["Ninguna", "Up-Sell aparece en la ficha (producto mejor/caro); Cross-Sell en el carrito (complementarios)", "Up-Sell es en el carrito", "Cross-sell es para afiliados"], a: 1, e: "Up-Sell intenta mejorar la compra actual. Cross-Sell intenta añadir más cosas al final." },
-        { q: "¿Cómo ocultarías el botón 'Añadir al carrito' para usar WooCommerce como Catálogo?", o: ["Borrando el plugin", "Con un plugin de 'Catalog Mode' o un snippet de código en functions.php", "En Ajustes > General", "No se puede"], a: 1, e: "WooCommerce no tiene botón nativo de 'Modo Catálogo', requiere código o plugin." },
-        { q: "Si borras un pedido en estado 'Completado', ¿qué pasa con los informes de ventas?", o: ["Se mantienen igual", "Se recalculan restando esa venta", "Da error", "Se duplican"], a: 1, e: "WooCommerce es dinámico; si borras el pedido, las estadísticas financieras cambian." },
-        { q: "¿Qué es el 'Transient' en WooCommerce?", o: ["Un cliente pasajero", "Datos temporales cacheados en la base de datos (como el contenido del carrito o fragmentos)", "Un método de envío", "Un error"], a: 1, e: "A veces hay que borrarlos en WooCommerce > Estado > Herramientas si el carrito hace cosas raras." },
-        { q: "Para vender entradas de un evento con stock limitado y fecha, ¿qué necesitas?", o: ["Solo WooCommerce", "WooCommerce + Plugin de Bookings/Events o Tickets", "Contact Form 7", "Un CPT"], a: 1, e: "WooCommerce estándar no gestiona bien calendarios ni reservas por horas." },
-
-        // --- BLOQUE 4: WPO, SEGURIDAD & SERVIDOR (Hardcore) ---
-        { q: "¿Qué regla en .htaccess bloquea el acceso directo a archivos PHP importantes como wp-config.php?", o: ["Deny from all", "Allow from none", "Block access", "Stop execution"], a: 0, e: "Es la directiva de Apache para prohibir cualquier petición HTTP a ese archivo." },
-        { q: "¿Qué es el 'Heartbeat' de WordPress y por qué puede ralentizar la web?", o: ["Un plugin de salud", "La API que comunica navegador y servidor cada 15s (autoguardado, avisos) consumiendo CPU", "El logo", "El cron"], a: 1, e: "Limitar el Heartbeat con plugins como WP Rocket reduce la carga del servidor." },
-        { q: "Si usas imágenes WebP pero el navegador del usuario es muy antiguo (Safari viejo), ¿qué pasa?", o: ["No ve nada", "Se usa la etiqueta <picture> o un plugin para servir JPG de respaldo (fallback)", "Error 404", "Se ve en blanco y negro"], a: 1, e: "La estrategia de 'fallback' es necesaria para compatibilidad total." },
-        { q: "¿Qué diferencia hay entre Caché de Página y Caché de Objeto (Object Cache)?", o: ["Ninguna", "Página guarda HTML estático; Objeto guarda consultas a la base de datos (Redis/Memcached)", "Objeto es para imágenes", "Página es para el admin"], a: 1, e: "Object Cache es vital para tiendas grandes o webs dinámicas donde el HTML no se puede cachear siempre." },
-        { q: "Si tienes un error de 'Mixed Content' tras pasar a HTTPS, ¿qué significa?", o: ["Contenido adulto", "Que la web carga por HTTPS pero algunos recursos (imgs/scripts) cargan por HTTP", "Error de base de datos", "Contenido duplicado"], a: 1, e: "El candado no sale verde. Se arregla con 'Better Search Replace' o plugins SSL." },
-        { q: "¿Qué es un ataque XSS (Cross-Site Scripting)?", o: ["Robo de contraseñas", "Inyección de scripts maliciosos en el navegador de otros usuarios a través de la web", "Ataque al servidor", "Fuerza bruta"], a: 1, e: "Ocurre si no se sanean (sanitize) los datos de entrada en formularios o comentarios." },
-        { q: "¿Cómo desactivarías la edición de archivos (Theme Editor) desde el admin por seguridad?", o: ["No se puede", "define('DISALLOW_FILE_EDIT', true); en wp-config.php", "Borrando el usuario", "Usando CSS"], a: 1, e: "Evita que si un hacker entra como admin, pueda inyectar malware en los archivos PHP." },
-        { q: "¿Qué es el 'WP-Cron'?", o: ["Un reloj", "El sistema de tareas programadas de WP que se ejecuta con cada visita", "Un virus", "Un plugin"], a: 1, e: "Si la web tiene pocas visitas, las tareas programadas (backups, posts) pueden fallar. Se recomienda usar el cron del servidor real." },
-
-        // --- BLOQUE 5: SEO TÉCNICO & DATOS ESTRUCTURADOS ---
-        { q: "¿Qué etiqueta meta es crítica para que el diseño responsive funcione en móviles?", o: ["meta charset", "meta viewport", "meta description", "meta robots"], a: 1, e: "Sin <meta name='viewport' ...>, los móviles renderizan la web como si fuera de escritorio (zoom out)." },
-        { q: "Si usas Yoast SEO, ¿qué hace la opción 'Canonical URL'?", o: ["Redirige al usuario", "Indica a Google cuál es la versión original de un contenido duplicado", "Borra la página", "Mejora la velocidad"], a: 1, e: "Evita penalizaciones por contenido duplicado si un post es accesible por varias URLs." },
-        { q: "¿Qué es el archivo 'sitemap_index.xml'?", o: ["Un mapa visual", "El índice que agrupa los sub-sitemaps (post, page, category) para enviarlos a Search Console", "El robots.txt", "La home"], a: 1, e: "Yoast/RankMath generan índices para no saturar un solo archivo XML." },
-        { q: "Si una página tiene la etiqueta 'noindex, follow', ¿qué hace el bot?", o: ["Nada", "No la indexa (no sale en resultados) pero SÍ sigue los enlaces que contiene", "La indexa pero no sigue enlaces", "La borra"], a: 1, e: "Útil para páginas de listados o etiquetas que no quieres posicionar pero quieres que se rastreen." },
-        { q: "¿Qué son los Datos Estructurados (Schema.org)?", o: ["Una base de datos", "Código JSON-LD que ayuda a Google a entender el contenido (Receta, Producto, Evento)", "CSS avanzado", "Plugins"], a: 1, e: "Permiten los 'Rich Snippets' (estrellitas, precios) en los resultados de búsqueda." },
-        
-        // --- BLOQUE 6: RESOLUCIÓN DE PROBLEMAS (TROUBLESHOOTING) ---
-        { q: "Si al subir una imagen recibes 'Error HTTP', ¿cuál NO suele ser una causa?", o: ["Falta de memoria PHP", "Nombre de archivo con caracteres raros (ñ, tildes)", "Versión de PHP muy antigua", "El color de la imagen"], a: 3, e: "El color no influye. La memoria, los nombres de archivo o las librerías GD/Imagick sí." },
-        { q: "Si tras migrar la web, los enlaces internos dan error 404, ¿qué paso olvidaste?", o: ["Guardar Enlaces Permanentes (flush rewrite rules)", "Subir las fotos", "Cambiar el tema", "Borrar caché"], a: 0, e: "Es necesario para regenerar el .htaccess con la nueva estructura." },
-        { q: "Si la web carga pero se ve 'descolocada' (sin CSS) y en la consola ves errores 403, ¿qué pasa?", o: ["El CSS está borrado", "Permisos de archivos incorrectos o plugin de seguridad bloqueando acceso a la carpeta de estilos", "Error de base de datos", "Falta el tema"], a: 1, e: "El servidor está prohibiendo la lectura de los archivos .css." },
-        { q: "¿Qué significa un error 503 Service Unavailable?", o: ["Página no encontrada", "El servidor está saturado o en mantenimiento temporal", "Permiso denegado", "Redirección"], a: 1, e: "Común cuando se agotan los recursos de la CPU/RAM del hosting." },
-        { q: "Si no puedes acceder a wp-admin por un bucle de redirecciones, ¿qué archivo probablemente está corrupto?", o: ["wp-config.php", ".htaccess", "index.php", "footer.php"], a: 1, e: "Un error en las reglas de reescritura provoca loops infinitos." },
-        
-        // --- BLOQUE 7: POOL GENERAL DE REFUERZO (Variedad Técnica) ---
-        { q: "¿Qué es un 'Hook' (Gancho) en WordPress?", o: ["Un error", "Un punto en el código donde puedes 'enganchar' tu propia función (Action o Filter) sin tocar el core", "Un plugin pirata", "Una herramienta de diseño"], a: 1, e: "La base de la extensibilidad de WP. Actions hacen cosas, Filters modifican datos." },
-        { q: "¿Para qué sirve la función 'the_content()'?", o: ["Muestra el título", "Muestra el cuerpo/contenido del post actual en el loop", "Muestra la fecha", "Muestra el autor"], a: 1, e: "Función esencial en cualquier archivo de plantilla single.php o page.php." },
-        { q: "¿Qué diferencia hay entre 'site_url()' y 'home_url()'?", o: ["Ninguna", "site_url es donde están los archivos de WP; home_url es la dirección que visita el usuario", "home_url es para el admin", "site_url es para imágenes"], a: 1, e: "Pueden ser diferentes si instalas WP en un subdirectorio pero lo sirves en la raíz." },
-        { q: "¿Qué es un 'Taxonomy' en WordPress?", o: ["Un impuesto", "Un sistema de clasificación de contenidos (Categorías, Etiquetas y personalizadas)", "Un usuario", "Un tipo de post"], a: 1, e: "Mecanismo para agrupar posts." },
-        { q: "¿Qué archivo maneja la página de resultados de búsqueda?", o: ["search.php", "find.php", "results.php", "query.php"], a: 0, e: "Si no existe, WP usará index.php." },
-        { q: "¿Es posible tener múltiples H1 en una página?", o: ["No, explota", "HTML5 lo permite, pero por SEO se recomienda tener solo uno principal", "Sí, cuantos más mejor", "Google penaliza si hay cero"], a: 1, e: "La buena práctica SEO sigue siendo un único H1 descriptivo." },
-        { q: "¿Qué significa que un tema sea 'Translation Ready'?", o: ["Que está en español", "Que el código usa funciones gettext (ej: __('Text', 'domain')) y está preparado para ser traducido", "Que tiene Google Translate", "Nada"], a: 1, e: "Permite generar archivos .pot para traducir con Loco Translate." },
-        { q: "¿Qué es un 'Must-Use Plugin' (mu-plugin)?", o: ["Un plugin recomendado", "Un plugin instalado en /wp-content/mu-plugins que se ejecuta automáticamente y no se puede desactivar desde el admin", "Un plugin de pago", "Un plugin de música"], a: 1, e: "Usado por hostings o desarrolladores para forzar funcionalidades críticas." },
-        
-        // --- BLOQUE 8: REPASO DE CONSTRUCCIÓN VISUAL ---
-        { q: "¿Qué diferencia hay entre 'px', 'em', 'rem', 'vw' y 'vh'?", o: ["Son lo mismo", "Son unidades absolutas (px) y relativas (em/rem al texto, vw/vh a la pantalla)", "Son colores", "Son formatos de imagen"], a: 1, e: "Dominar esto es clave para el Responsive Design real." },
-        { q: "En Elementor, ¿qué es el 'Navigator'?", o: ["El navegador web", "Un panel de capas tipo Photoshop para ver la estructura HTML", "El mapa", "La ayuda"], a: 1, e: "Indispensable para seleccionar elementos ocultos o superpuestos." },
-        { q: "¿Qué es el 'Theme Style' (Estilos del Tema) en Elementor?", o: ["Un widget", "Configuración global que sobrescribe el CSS del tema (tipografía, botones, fondos) sin código", "Un plugin", "Un error"], a: 1, e: "Permite controlar la identidad visual globalmente." },
-        { q: "¿Qué ocurre si desactivas Elementor Pro pero dejas Elementor Free?", o: ["Todo funciona igual", "Pierdes las funciones Pro (Header, Footer, Formuarios, CSS Custom), pero el contenido básico se mantiene", "Se borra la web", "Error 500"], a: 1, e: "Los widgets Pro desaparecen o dejan de renderizarse correctamente." },
-        
-        // --- BLOQUE 9: PREGUNTAS TRAMPA (Contexto del Curso) ---
-        { q: "¿Se puede usar un Custom Post Type sin plugin?", o: ["No, es imposible", "Sí, escribiendo el código (register_post_type) en functions.php", "Solo pagando", "Solo en temas Pro"], a: 1, e: "Los plugins como CPT UI o JetEngine solo son una interfaz visual para generar ese código PHP." },
-        { q: "¿Qué pasa si borras la categoría 'Sin categoría' (Uncategorized)?", o: ["Se rompe la web", "No se puede borrar, es la categoría por defecto", "Desaparecen los posts", "Nada"], a: 1, e: "Puedes renombrarla, pero WP exige que siempre exista al menos una categoría base." },
-        { q: "¿Qué es el 'Loop Grid' de Elementor?", o: ["Un widget para mostrar listados de posts con un diseño de tarjeta totalmente personalizado", "Una galería", "Un menú", "Un formulario"], a: 1, e: "La evolución moderna de la visualización de archivos." },
-        { q: "¿Qué hace la función 'WordPress Importer'?", o: ["Importa demos", "Importa contenido XML (Posts, Páginas, Comentarios, Medios) de otro WP", "Importa usuarios", "Importa bases de datos SQL"], a: 1, e: "Herramienta nativa en Herramientas > Importar." },
-        
-        // --- BLOQUE 10: SEGURIDAD DE ARCHIVOS ---
+    // --- BASE DE DATOS CORREGIDA (120 PREGUNTAS) ---
+    const DB = [
+        // ARQUITECTURA Y CORE
+        { q: "¿Qué archivo es OBLIGATORIO para que WordPress reconozca un tema nuevo (además del index.php)?", o: ["functions.php", "style.css", "screenshot.png", "header.php"], a: 1, e: "style.css debe contener la cabecera con el nombre del tema (Theme Name)." },
+        { q: "En la Jerarquía de Plantillas, si no existe 'category.php', ¿qué busca WordPress inmediatamente después?", o: ["index.php", "archive.php", "page.php", "single.php"], a: 1, e: "Orden: category-slug > category-id > category > archive > index." },
+        { q: "Si mueves tu WordPress de dominio y no accedes, ¿qué constantes defines en wp-config.php?", o: ["WP_NEWHOME y WP_NEWURL", "WP_HOME y WP_SITEURL", "RELOCATE_URL", "CHANGE_DOMAIN"], a: 1, e: "Sobrescriben los valores de la base de datos temporalmente." },
+        { q: "¿Qué ocurre técnicamente cuando activas 'WP_DEBUG' a true?", o: ["Se muestra el log de accesos", "Se muestran errores y avisos PHP en el front-end", "La web se pone en mantenimiento", "Se borra la caché"], a: 1, e: "Nunca debe estar activo en producción." },
+        { q: "¿Dónde se almacenan los datos serializados de los Widgets?", o: ["wp_posts", "wp_options", "wp_termmeta", "wp_users"], a: 1, e: "Cuidado al hacer buscar-reemplazar en la DB." },
+        { q: "¿Qué permiso chmod es el correcto y seguro para wp-config.php?", o: ["777", "755", "644 o 600", "000"], a: 2, e: "777 es una vulnerabilidad crítica." },
+        { q: "¿Qué función es vital en header.php para cargar scripts de plugins?", o: ["wp_head()", "get_header()", "wp_footer()", "include_once()"], a: 0, e: "Sin wp_head(), los plugins no pueden inyectar su CSS/JS." },
+        { q: "Error 'Allowed memory size exhausted', ¿dónde se soluciona?", o: ["Borrando imágenes", "Aumentando memory_limit en wp-config.php", "Cambiando tema", "Reinstalando"], a: 1, e: "Falta de RAM asignada a PHP." },
+        { q: "¿Qué es el 'Salt' en wp-config.php?", o: ["Seguridad cookies", "Claves de encriptación de sesión", "Prefijo DB", "Caché"], a: 1, e: "Invalidan todas las cookies de sesión al cambiarlas." },
+        { q: "¿Qué es 'MySQL'?", o: ["El sistema de base de datos de WP", "Un lenguaje", "Un plugin", "Un tema"], a: 0, e: "Donde se guardan los datos (texto, opciones)." },
+        { q: "¿Qué es la 'REST API' de WordPress?", o: ["Un plugin", "Interfaz que permite a aplicaciones externas (Apps móviles, JS) interactuar con los datos de WP (JSON)", "Un tema", "Un error"], a: 1, e: "Convierte a WP en un framework de aplicaciones (Headless WP)." },
+        { q: "¿Qué es un 'Hook'?", o: ["Error", "Punto para enganchar funciones (Action/Filter)", "Pirata", "Diseño"], a: 1, e: "Base de extensibilidad." },
+        { q: "Función 'the_content()':", o: ["Título", "Muestra cuerpo del post", "Fecha", "Autor"], a: 1, e: "Esencial en el loop." },
+        { q: "Diferencia site_url() vs home_url():", o: ["Ninguna", "site: archivos WP; home: dirección visita", "home: admin", "site: img"], a: 1, e: "Distintos si WP está en subdirectorio." },
+        { q: "¿Qué es un 'Must-Use Plugin' (mu-plugin)?", o: ["Recomendado", "Must-Use: Ejecución forzosa, no desactivable en admin", "Pago", "Música"], a: 1, e: "Carga antes que los normales." },
         { q: "¿Qué archivo evita que Google indexe una carpeta concreta del servidor?", o: [".htaccess", "robots.txt", "index.php", "config.php"], a: 1, e: "Disallow: /carpeta/ en robots.txt." },
         { q: "¿Por qué se recomienda desactivar XML-RPC si no se usa?", o: ["Por velocidad", "Es un vector común de ataques de fuerza bruta y DDoS", "Por SEO", "Por diseño"], a: 1, e: "Es una API antigua que permite múltiples intentos de contraseña en una sola petición." },
         { q: "¿Qué es un 'Nonce' en WordPress?", o: ["Un insulto", "Number used ONCE: token de seguridad para proteger URLs y formularios contra ataques CSRF", "Un usuario", "Un plugin"], a: 1, e: "Garantiza que la acción la realiza el usuario que dice ser y desde donde debe ser." },
-        
-        // --- PREGUNTAS CLAVE DE RAFA ARJONILLA (Refuerzo) ---
-        { q: "Según Rafa, ¿cuál es la mejor forma de captar clientes en frío?", o: ["Llamando por teléfono", "Auditorías en vídeo (Loom) detectando errores en sus webs", "Spam por email", "Repartir flyers"], a: 1, e: "Estrategia mencionada en la última sesión para freelance." },
-        { q: "¿Qué es 'Live Link' en LocalWP?", o: ["Un enlace permanente", "Un túnel temporal (ngrok) para enseñar la web local a un cliente remoto", "Un error", "Un plugin"], a: 1, e: "Permite mostrar avances sin subir a hosting real." },
-        { q: "¿Qué plugin recomienda el curso para crear copias de seguridad portables?", o: ["Duplicator", "All-in-One WP Migration", "BackupBuddy", "Updraft"], a: 1, e: "Estándar del curso para entregas." },
-        { q: "¿Qué ajuste es crucial cambiar en 'Ajustes de Lectura' antes de lanzar la web?", o: ["Número de posts", "Desmarcar 'Disuadir a los motores de búsqueda'", "El correo", "La zona horaria"], a: 1, e: "El error #1 de los novatos: lanzar la web y dejarla bloqueada a Google." },
+        { q: "¿Qué es 'functions.php'?", o: ["Config", "Actúa como plugin del tema", "DB", "Estilo"], a: 1, e: "Lógica del tema." },
+        { q: "WP_Query es:", o: ["Consulta a DB para traer posts", "Diseño", "Plugin", "Error"], a: 0, e: "Base del Loop." },
+
+        // ELEMENTOR PRO
+        { q: "CSS Personalizado Elementor: ¿Qué palabra selecciona el widget actual?", o: ["#this", "selector", ".elementor-item", "self"], a: 1, e: "Evita tener que poner clases manuales." },
+        { q: "¿Qué hace 'Regenerar CSS y Datos' en Elementor?", o: ["Borra la DB", "Limpia la caché interna de estilos y regenera archivos CSS", "Resetea diseño", "Actualiza licencia"], a: 1, e: "Soluciona estilos que no se ven." },
+        { q: "¿Cómo crear plantilla 404 personalizada en Elementor Pro?", o: ["Página normal", "Theme Builder > Error 404", "Plugin externo", "Editar PHP"], a: 1, e: "Se asigna automáticamente a URLs rotas." },
+        { q: "Mostrar Popup solo en entradas de categoría 'Noticias'. ¿Condición?", o: ["Singular > All", "Archives > Noticias", "Singular > Entradas > In Category: Noticias", "Entire Site"], a: 2, e: "Condición específica de taxonomía." },
+        { q: "Dos secciones Sticky se solapan mal. ¿Solución?", o: ["Z-Index mayor en la superior", "Z-Index mayor en la inferior", "Margen negativo", "Fondo"], a: 0, e: "Controla el apilamiento." },
+        { q: "¿Qué es 'Flexbox' en Elementor?", o: ["Plugin", "Modelo de diseño unidimensional para distribuir espacio", "Caja flexible", "Error"], a: 1, e: "El nuevo estándar de contenedores." },
+        { q: "¿Para qué sirve el widget 'Shortcode'?", o: ["Escribir PHP", "Renderizar salida de plugins externos (ej: Forms)", "Espacios", "Seguridad"], a: 1, e: "Integra plugins sin widget propio." },
+        { q: "¿Qué hace 'Overflow: Hidden' en un contenedor?", o: ["Oculta todo", "Recorta contenido que se salga de los bordes", "Scroll", "Oculta menú"], a: 1, e: "Evita scroll horizontal indeseado." },
+        { q: "En Elementor, ¿qué es el 'Navigator'?", o: ["El navegador web", "Un panel de capas tipo Photoshop para ver la estructura HTML", "El mapa", "La ayuda"], a: 1, e: "Indispensable para seleccionar elementos ocultos o superpuestos." },
+        { q: "¿Qué es el 'Theme Style' (Estilos del Tema) en Elementor?", o: ["Un widget", "Configuración global que sobrescribe el CSS del tema (tipografía, botones, fondos) sin código", "Un plugin", "Un error"], a: 1, e: "Permite controlar la identidad visual globalmente." },
+        { q: "¿Qué ocurre si desactivas Elementor Pro pero dejas Elementor Free?", o: ["Todo funciona igual", "Pierdes las funciones Pro (Header, Footer, Formuarios, CSS Custom), pero el contenido básico se mantiene", "Se borra la web", "Error 500"], a: 1, e: "Los widgets Pro desaparecen o dejan de renderizarse correctamente." },
+        { q: "¿Qué es el 'Loop Grid' de Elementor?", o: ["Un widget para mostrar listados de posts con un diseño de tarjeta totalmente personalizado", "Una galería", "Un menú", "Un formulario"], a: 1, e: "La evolución moderna de la visualización de archivos." },
+        { q: "¿Qué es el 'Maintenance Mode' de Elementor?", o: ["Modo seguro", "Herramienta nativa para mostrar una página de 'Próximamente' o 'Mantenimiento' y devolver código 503", "Un error", "Un widget"], a: 1, e: "Evita instalar plugins extra de mantenimiento." },
+        { q: "Diferencia px, em, rem:", o: ["Iguales", "px absoluto, rem relativo a raíz", "Colores", "Formatos"], a: 1, e: "Clave para responsive." },
+        { q: "Visibility:Hidden vs Display:None:", o: ["Igual", "Hidden ocupa espacio; None lo quita del flujo", "None mejor", "Hidden móvil"], a: 1, e: "Maquetación." },
+        { q: "¿Qué es un 'ID' de CSS?", o: ["Un identificador único por página (#header)", "Una clase (.header)", "Una etiqueta", "Un estilo"], a: 0, e: "Identificador único." },
+
+        // WOOCOMMERCE
+        { q: "¿Dónde se guardan los atributos globales de productos?", o: ["wp_postmeta", "wp_options", "wp_terms, wp_termmeta y wp_term_taxonomy", "wp_woocommerce"], a: 2, e: "Funcionan como taxonomías." },
+        { q: "Producto Descargable: ¿Cómo proteger el enlace?", o: ["No se puede", "WooCommerce fuerza descarga por PHP ocultando ruta real", "Contraseña", "Dropbox"], a: 1, e: "El método 'Force Download'." },
+        { q: "Correos de WooCommerce no llegan. Causa probable:", o: ["Plugin roto", "Falta SMTP en el servidor", "Falta asunto", "Cliente miente"], a: 1, e: "PHP Mail suele fallar o ir a SPAM." },
+        { q: "Diferencia Cross-Sell vs Up-Sell:", o: ["Ninguna", "Up-Sell: producto mejor (Ficha); Cross-Sell: complementario (Carrito)", "Al revés", "Afiliados"], a: 1, e: "Up-Sell mejora la venta; Cross-Sell la amplía." },
+        { q: "¿Cómo poner WooCommerce en 'Modo Catálogo'?", o: ["Borrando el plugin", "Plugin específico o código PHP para ocultar botón compra", "Ajustes", "No se puede"], a: 1, e: "Nativamente no tiene esa opción." },
+        { q: "¿Qué es el 'Transient' en WooCommerce?", o: ["Cliente", "Datos temporales cacheados (carrito/fragmentos)", "Envío", "Error"], a: 1, e: "A veces hay que borrarlos si el carrito falla." },
         { q: "¿Qué es el 'System Status' de WooCommerce?", o: ["Un informe técnico vital para detectar problemas de memoria, versiones o plugins", "Una factura", "El estado del pedido", "Un tema"], a: 1, e: "Lo primero que se revisa si la tienda falla." },
         { q: "Si vendes productos a Canarias desde península, ¿qué configuración necesitas?", o: ["Nada", "Una Zona de Envío específica para Canarias con exención de impuestos si aplica", "Otro WooCommerce", "Un plugin de idiomas"], a: 1, e: "WooCommerce permite geolocalizar y cambiar reglas fiscales/envío." },
-        
-        // --- RELLENO FINAL HASTA ~120 CALIDAD ---
-        { q: "¿Qué es la 'REST API' de WordPress?", o: ["Un plugin", "Interfaz que permite a aplicaciones externas (Apps móviles, JS) interactuar con los datos de WP (JSON)", "Un tema", "Un error"], a: 1, e: "Convierte a WP en un framework de aplicaciones (Headless WP)." },
-        { q: "¿Qué significa que una imagen sea 'Retina Ready'?", o: ["Que tiene el doble de densidad de píxeles para verse nítida en pantallas modernas", "Que es pequeña", "Que es azul", "Que es vectorial"], a: 1, e: "Requiere subir imágenes al doble de tamaño o usar SVGs." },
-        { q: "¿Qué es el 'Maintenance Mode' de Elementor?", o: ["Modo seguro", "Herramienta nativa para mostrar una página de 'Próximamente' o 'Mantenimiento' y devolver código 503", "Un error", "Un widget"], a: 1, e: "Evita instalar plugins extra de mantenimiento." },
-        { q: "¿Qué es un 'ID' de CSS?", o: ["Un identificador único por página (#header)", "Una clase (.header)", "Una etiqueta", "Un estilo"], a: 0, e: "A diferencia de las clases, el ID solo debe usarse una vez por documento." },
-        { q: "¿Qué diferencia hay entre 'Visibility: Hidden' y 'Display: None' en CSS?", o: ["Ninguna", "Hidden oculta pero ocupa espacio; None elimina el elemento del flujo (no ocupa espacio)", "None es mejor", "Hidden es para móviles"], a: 1, e: "Concepto clave de maquetación." },
-        { q: "¿Qué es el archivo 'functions.php'?", o: ["Un archivo de configuración", "El cerebro del tema: actúa como un plugin para añadir funcionalidades PHP", "La base de datos", "El estilo"], a: 1, e: "Se carga automáticamente con el tema." },
-        { q: "¿Qué es un 'Child Theme'?", o: ["Una copia exacta", "Un tema que hereda del padre y permite sobreescribir archivos sin perder cambios al actualizar", "Un tema pequeño", "Un plugin"], a: 1, e: "Obligatorio para desarrollos profesionales." },
-        { q: "¿Qué es 'Localhost'?", o: ["El servidor local (tu ordenador, IP 127.0.0.1)", "Internet", "Un hosting", "Un dominio"], a: 0, e: "Donde trabaja LocalWP." },
-        { q: "¿Qué es una 'Query' (Consulta)?", o: ["Una pregunta a la base de datos para traer posts", "Un diseño", "Un plugin", "Un error"], a: 0, e: "El Loop se basa en una WP_Query." },
-        { q: "¿Qué es 'Debug'?", o: ["Depurar errores", "Diseñar", "Instalar", "Borrar"], a: 0, e: "Proceso de búsqueda y solución de fallos." },
-        { q: "¿Qué es 'FTP'?", o: ["File Transfer Protocol (acceso a archivos del servidor)", "Un plugin", "Un tema", "Un dominio"], a: 0, e: "Acceso directo a las carpetas si WP falla." },
-        { q: "¿Qué es 'SFTP'?", o: ["FTP Seguro", "FTP Súper", "FTP Simple", "Nada"], a: 0, e: "Versión encriptada del protocolo." },
-        { q: "¿Qué es 'cPanel'?", o: ["Panel de control del hosting", "Panel de WP", "Panel de Elementor", "Un plugin"], a: 0, e: "Interfaz común para gestionar el servidor." },
-        { q: "¿Qué es 'phpMyAdmin'?", o: ["Gestor visual de bases de datos MySQL", "Un plugin", "Un tema", "Un editor"], a: 0, e: "Herramienta para tocar la BD directamente." },
-        { q: "¿Qué es 'Gzip/Brotli'?", o: ["Compresión de archivos en el servidor para envío más rápido", "Un plugin", "Una imagen", "Un error"], a: 0, e: "Mejora la velocidad de transferencia." },
-        { q: "¿Qué es 'CDN'?", o: ["Content Delivery Network (Red de servidores para servir contenido desde el punto más cercano al usuario)", "Un canal de TV", "Un plugin", "Un dominio"], a: 0, e: "Cloudflare es el más famoso." }
+
+        // WPO Y SEGURIDAD
+        { q: "¿Qué regla .htaccess bloquea acceso a wp-config.php?", o: ["Deny from all", "Allow from none", "Block access", "Stop execution"], a: 0, e: "Prohíbe peticiones HTTP directas." },
+        { q: "¿Qué es el 'Heartbeat' de WP?", o: ["Salud", "API que comunica navegador-servidor cada 15s (CPU)", "Logo", "Cron"], a: 1, e: "Conviene limitarlo para ahorrar recursos." },
+        { q: "Imágenes WebP en navegador antiguo (Safari viejo). ¿Solución?", o: ["No se ve", "Fallback a JPG usando <picture> o plugin", "Error 404", "B/N"], a: 1, e: "Compatibilidad retroactiva." },
+        { q: "Caché Página vs Caché Objeto:", o: ["Iguales", "Página: HTML estático; Objeto: Consultas DB (Redis)", "Objeto: Imágenes", "Página: Admin"], a: 1, e: "Object Cache es vital para tiendas." },
+        { q: "Error 'Mixed Content' tras activar SSL. Significa:", o: ["Adulto", "Recursos (img/script) cargando por HTTP en web HTTPS", "Error DB", "Duplicado"], a: 1, e: "El candado no sale verde." },
+        { q: "¿Qué es ataque XSS?", o: ["Robo pass", "Inyección scripts maliciosos en navegador de usuario", "Servidor", "Fuerza bruta"], a: 1, e: "Sanitizar inputs es clave." },
+        { q: "¿Cómo desactivar edición de archivos desde admin?", o: ["Imposible", "define('DISALLOW_FILE_EDIT', true);", "Borrar user", "CSS"], a: 1, e: "Seguridad básica." },
+        { q: "¿Qué es 'WP-Cron'?", o: ["Reloj", "Sistema de tareas programadas ejecutado con visitas", "Virus", "Plugin"], a: 1, e: "Mejor usar cron real del servidor." },
+
+        // SEO Y ESTRUCTURA
+        { q: "Meta etiqueta crítica para Responsive:", o: ["charset", "viewport", "description", "robots"], a: 1, e: "Sin ella, el móvil hace zoom out." },
+        { q: "Opción 'Canonical URL' en Yoast:", o: ["Redirige", "Indica versión original de contenido duplicado", "Borra", "Velocidad"], a: 1, e: "Evita penalización por duplicidad." },
+        { q: "¿Qué es sitemap_index.xml?", o: ["Mapa visual", "Índice que agrupa sub-sitemaps para Search Console", "Robots", "Home"], a: 1, e: "Para no saturar un solo XML." },
+        { q: "Etiqueta 'noindex, follow'. El bot:", o: ["Nada", "No indexa pero sigue enlaces", "Indexa sin enlaces", "Borra"], a: 1, e: "Para listados que quieres rastrear pero no posicionar." },
+        { q: "¿Qué son Datos Estructurados (Schema)?", o: ["DB", "JSON-LD para Rich Snippets (Google)", "CSS", "Plugins"], a: 1, e: "Estrellitas y precios en Google." },
+
+        // TROUBLESHOOTING
+        { q: "Error HTTP al subir imagen. Causa NO probable:", o: ["Falta memoria", "Caracteres raros en nombre", "PHP antiguo", "Color de imagen"], a: 3, e: "El color no afecta." },
+        { q: "Enlaces internos dan 404 tras migrar. Solución:", o: ["Guardar Enlaces Permanentes", "Subir fotos", "Tema", "Caché"], a: 0, e: "Regenera .htaccess." },
+        { q: "Web carga 'descolocada' (sin CSS) y error 403 en consola:", o: ["CSS borrado", "Permisos incorrectos o firewall bloqueando carpeta", "DB", "Tema"], a: 1, e: "Servidor prohíbe leer .css." },
+        { q: "Error 503 Service Unavailable:", o: ["404", "Servidor saturado/mantenimiento", "Permiso", "Redirección"], a: 1, e: "Falta de recursos." },
+        { q: "Bucle redirecciones en admin. Causa:", o: ["wp-config", ".htaccess corrupto", "index", "footer"], a: 1, e: "Reglas de reescritura infinitas." },
+
+        // OTROS CONCEPTOS (RAFA Y MANUAL)
+        { q: "Captar clientes en frío (Rafa):", o: ["Llamadas", "Auditorías en vídeo (Loom) detectando errores en sus webs", "Spam", "Flyers"], a: 1, e: "Estrategia recomendada." },
+        { q: "Live Link en LocalWP:", o: ["Permanente", "Túnel temporal para enseñar web local", "Error", "Plugin"], a: 1, e: "Enseñar avances." },
+        { q: "Plugin backups portable:", o: ["Duplicator", "All-in-One WP Migration", "BackupBuddy", "Updraft"], a: 1, e: "Estándar del curso." },
+        { q: "Error #1 al lanzar web:", o: ["Posts", "Olvidar desmarcar 'Disuadir motores búsqueda'", "Correo", "Hora"], a: 1, e: "Web bloqueada a Google." },
+        { q: "Posible tener múltiples H1?", o: ["No", "HTML5 permite, SEO recomienda uno", "Sí", "Google penaliza 0"], a: 1, e: "Mejor uno descriptivo." },
+        { q: "Tema 'Translation Ready':", o: ["Español", "Usa gettext y preparado para .pot", "Translate", "Nada"], a: 1, e: "Traducible con Loco Translate." },
+        { q: "Custom Post Type sin plugin?", o: ["Imposible", "Sí, código register_post_type en functions", "Pagando", "Pro"], a: 1, e: "Los plugins solo son interfaz." },
+        { q: "Borrar categoría 'Uncategorized':", o: ["Rompe web", "No se puede, es default", "Borra posts", "Nada"], a: 1, e: "Siempre debe haber una por defecto." },
+        { q: "Evitar indexar carpeta servidor:", o: ["htaccess", "robots.txt Disallow", "index", "config"], a: 1, e: "Control de rastreo." },
+        { q: "Desactivar XML-RPC:", o: ["Velocidad", "Evitar fuerza bruta/DDoS", "SEO", "Diseño"], a: 1, e: "API antigua vulnerable." },
+        { q: "¿Qué es un 'Nonce'?", o: ["Insulto", "Token seguridad uso único", "User", "Plugin"], a: 1, e: "Protege URLs/Forms." },
+        { q: "Imagen Retina Ready:", o: ["Doble densidad píxeles", "Pequeña", "Azul", "Vector"], a: 1, e: "Nitidez en pantallas nuevas." },
+        { q: "Localhost IP:", o: ["127.0.0.1", "192.168.1.1", "0.0.0.0", "8.8.8.8"], a: 0, e: "Tu ordenador." },
+        { q: "¿Qué es un iframe?", o: ["Una ventana para incrustar contenido externo (ej: Maps)", "Un marco de foto", "Un plugin", "Un error"], a: 0, e: "HTML para embeber recursos." },
+        { q: "¿Qué es el 'Padding'?", o: ["Relleno interno", "Margen externo", "Borde", "Color"], a: 0, e: "Espacio dentro de la caja." },
+        { q: "¿Qué es el 'Margin'?", o: ["Espacio externo entre cajas", "Relleno", "Borde", "Color"], a: 0, e: "Separa elementos." },
+        { q: "¿Qué es un Dominio?", o: ["El nombre de la web (ej: google.com)", "El servidor", "El hosting", "El diseño"], a: 0, e: "La dirección que escribes en el navegador." },
+        { q: "¿Qué es DNS?", o: ["Sistema que traduce dominios a IPs", "Un servidor", "Un plugin", "Un error"], a: 0, e: "La agenda telefónica de internet." },
+        { q: "¿Qué es PHP?", o: ["Lenguaje de programación de WordPress", "Un diseño", "Una base de datos", "Un navegador"], a: 0, e: "Lenguaje del lado del servidor." },
+        { q: "¿Qué es 'Squoosh'?", o: ["Una bebida", "Herramienta online para comprimir imágenes", "Un plugin", "Un tema"], a: 1, e: "Recomendada en el curso para optimizar antes de subir." },
+        { q: "¿Qué es el 'Slug'?", o: ["Un virus", "La parte final amigable de la URL", "El dominio", "La base de datos"], a: 1, e: "Ej: midominio.com/contacto ('contacto' es el slug)." },
+        { q: "¿Qué es un Child Theme (Tema Hijo)?", o: ["Un tema para niños", "Una plantilla que hereda funciones del padre para modificar código sin perderlo al actualizar", "Un plugin", "Un widget"], a: 1, e: "Permite personalizar functions.php y style.css de forma segura." },
+        { q: "En Elementor, ¿qué diferencia hay entre Margin y Padding?", o: ["Son iguales", "Margin es espacio interno, Padding externo", "Margin es espacio externo (entre elementos), Padding interno (relleno)", "Ninguna"], a: 2, e: "Margin separa cajas; Padding separa el contenido del borde de su caja." },
+        { q: "¿Para qué sirve el atributo 'alt' en las imágenes?", o: ["Para que carguen rápido", "Para SEO y accesibilidad (ciegos)", "Para poner borde", "No sirve"], a: 1, e: "Describe la imagen a Google y lectores de pantalla." },
+        { q: "¿Qué es un CPT (Custom Post Type)?", o: ["Un tipo de contenido personalizado (ej: Proyectos)", "Un error", "Un plugin de caché", "Un comentario"], a: 0, e: "Amplía WP más allá de Entradas y Páginas." },
+        { q: "¿Qué herramienta usamos para crear un entorno local en el ordenador?", o: ["LocalWP", "Word", "Photoshop", "Drive"], a: 0, e: "Simula un servidor en tu PC para desarrollar sin internet." },
+        { q: "Para vender un PDF descargable, ¿qué casillas marcas en el producto?", o: ["Virtual y Descargable", "Solo Virtual", "Físico", "Agrupado"], a: 0, e: "Virtual quita el envío, Descargable permite subir el archivo." },
+        { q: "¿Qué es una Zona de Envío en WooCommerce?", o: ["El almacén", "Área geográfica con tarifas específicas", "La dirección del cliente", "Un plugin"], a: 1, e: "Permite diferenciar precios entre Península, Canarias, Europa, etc." },
+        { q: "Si la web muestra una pantalla blanca (WSOD), ¿qué suele ser?", o: ["Error de PHP o plugin incompatible", "Fallo de internet", "Virus", "Pantalla rota"], a: 0, e: "Error crítico de ejecución de código." },
+        { q: "¿Qué etiqueta HTML es la más importante para el SEO on-page?", o: ["H1", "H2", "Div", "Span"], a: 0, e: "Define el título principal del contenido." },
+        { q: "¿Qué es el Z-Index en Elementor?", o: ["El zoom", "El orden de apilamiento (capas)", "El color", "El margen"], a: 1, e: "Controla qué elemento pasa por encima de otro." },
+        { q: "¿Cómo se llama el editor de bloques nativo de WordPress?", o: ["Classic", "Gutenberg", "Divi", "WPBakery"], a: 1, e: "Introducido en la versión 5.0." },
+        { q: "¿Qué es el Theme Builder?", o: ["Un constructor de temas (Cabeceras, Pies, Archivos)", "Un plugin de seguridad", "Un hosting", "Un menú"], a: 0, e: "Permite diseñar las partes estructurales de la web." },
+        { q: "¿Qué es un 'Blueprint' en LocalWP?", o: ["Un plano azul", "Una plantilla de sitio guardada para reutilizar", "Un error", "Una base de datos"], a: 1, e: "Guarda tu configuración base para nuevos proyectos." },
+        { q: "¿Qué hook se ejecuta justo antes del cierre del body?", o: ["wp_head", "wp_footer", "wp_content", "admin_init"], a: 1, e: "Carga scripts JS y la barra de administración." },
+        { q: "¿Qué es una 'Breadcrumb'?", o: ["Miga de pan (rastro de navegación)", "Un plugin de comida", "Un error 404", "Un widget"], a: 0, e: "Mejora UX indicando la ruta: Inicio > Tienda > Producto." },
+        { q: "¿Qué diferencia hay entre Entradas y Páginas?", o: ["Ninguna", "Entradas = Cronológicas/Dinámicas; Páginas = Estáticas/Jerárquicas", "Páginas son para blog", "Entradas no tienen fecha"], a: 1, e: "Concepto base de la arquitectura de WP." },
+        { q: "Si quiero traducir cadenas de texto de un tema, ¿qué plugin uso?", o: ["Loco Translate", "WPML", "Yoast", "Jetpack"], a: 0, e: "Editor de archivos PO/MO integrado." },
+        { q: "¿Qué hace la opción 'Disuadir a los motores de búsqueda' en Ajustes?", o: ["Añade noindex a toda la web", "Mejora el SEO", "Borra la web", "Nada"], a: 0, e: "Evita que Google indexe la web mientras está en desarrollo." },
+        { q: "¿Qué es un Shortcode?", o: ["Un código corto [ejemplo] para insertar funciones", "Un error", "Una contraseña", "Un enlace"], a: 0, e: "Método clásico para incrustar elementos dinámicos." },
+        { q: "¿Qué es el Favicon?", o: ["El logo grande", "El icono en la pestaña del navegador", "El footer", "Un menú"], a: 1, e: "Identidad visual en el navegador." },
+        { q: "¿Qué es un Global Widget en Elementor?", o: ["Un widget mundial", "Un elemento que se actualiza en todas partes si lo editas una vez", "Un mapa", "Un error"], a: 1, e: "Útil para CTAs repetitivos." },
+        { q: "¿Qué es HTTPS?", o: ["Protocolo seguro (SSL)", "Protocolo lento", "Web antigua", "Dominio"], a: 0, e: "Cifra la conexión entre usuario y servidor." },
+        { q: "¿Cuál es la resolución de referencia Desktop estándar?", o: ["1920px", "800px", "4000px", "100px"], a: 0, e: "Ancho Full HD habitual para diseño." }
     ];
 
     // VARIABLES DE ESTADO
@@ -213,16 +227,13 @@ const DB = [
         questions.forEach((q, index) => {
             // Crear HTML de la pregunta
             let html = `
-                <div class="question-card" id="card-${index}">
+                <div class="card" id="card-${index}">
                     <div class="q-text">${index + 1}. ${q.q}</div>
                     <div class="options-group">
             `;
             
-            // Barajar opciones visualmente pero manteniendo índice correcto
-            // Truco: Mapeamos indices originales
             let indices = q.o.map((_, i) => i); // [0, 1, 2, 3]
-            // Si quieres barajar opciones descomenta la siguiente línea:
-            // indices.sort(() => 0.5 - Math.random());
+            // indices.sort(() => 0.5 - Math.random()); // Descomentar para barajar opciones
 
             indices.forEach(i => {
                 html += `
@@ -246,7 +257,7 @@ const DB = [
         startTimer();
     }
 
-// --- LÓGICA DE CORRECCIÓN HÍBRIDA (PEGAR ESTO EN EL SCRIPT) ---
+    // --- LÓGICA DE CORRECCIÓN HÍBRIDA ---
 
     // 1. Función para comprobar UNA pregunta individual (Botón azul)
     window.check = function(index) {
@@ -256,29 +267,28 @@ const DB = [
         const val = parseInt(selected.value);
         const correct = questions[index].a;
         
-        // Elementos visuales
         const card = document.getElementById(`card-${index}`);
         const btn = card.querySelector('.check-btn');
         const expBox = document.getElementById(`exp-${index}`);
         
-        // Guardar la respuesta en el sistema
+        // Guardar
         userAnswers[index] = (val === correct);
 
-        // Bloquear para que no se pueda cambiar
+        // Bloquear
         const inputs = card.querySelectorAll('input');
         inputs.forEach(inp => inp.disabled = true);
         btn.disabled = true;
         btn.textContent = "Revisado";
-        btn.style.background = "#a7aaad"; // Gris visual
+        btn.style.background = "#a7aaad";
 
-        // Mostrar Feedback (Verde/Rojo + Explicación)
+        // Feedback
         if (val === correct) {
-            document.getElementById(`lbl-${index}-${val}`).classList.add('correct'); // Verde
+            document.getElementById(`lbl-${index}-${val}`).classList.add('correct');
             expBox.innerHTML = `<strong>✅ ¡CORRECTO!</strong><br>${questions[index].e}`;
             expBox.style.borderLeftColor = "#00a32a";
         } else {
-            document.getElementById(`lbl-${index}-${val}`).classList.add('wrong'); // Rojo tachado
-            document.getElementById(`lbl-${index}-${correct}`).classList.add('correct'); // Verde a la correcta
+            document.getElementById(`lbl-${index}-${val}`).classList.add('wrong');
+            document.getElementById(`lbl-${index}-${correct}`).classList.add('correct');
             expBox.innerHTML = `<strong>❌ INCORRECTO.</strong><br>La correcta es la marcada en verde.<br><em>${questions[index].e}</em>`;
             expBox.style.borderLeftColor = "#d63638";
         }
@@ -287,38 +297,28 @@ const DB = [
 
     // 2. Función FINAL (Botón rojo flotante) - CORRIGE TODO LO PENDIENTE
     window.finishExam = function() {
-        clearInterval(timer); // Parar el tiempo
+        clearInterval(timer);
 
-        // Recorremos las 50 preguntas para ver qué pasó con cada una
         questions.forEach((q, index) => {
-            
-            // Caso A: El usuario ya le dio a "Comprobar" antes (Ya está guardado)
-            if (userAnswers.hasOwnProperty(index)) {
-                return; // Pasamos a la siguiente, esta ya cuenta
-            }
+            // Si ya se corrigió individualmente, saltar
+            if (userAnswers.hasOwnProperty(index)) return;
 
-            // Caso B: El usuario marcó una opción pero NO le dio a "Comprobar"
             const selected = document.querySelector(`input[name="q_${index}"]:checked`);
             
             if (selected) {
                 const val = parseInt(selected.value);
-                // La corregimos ahora mismo automáticamente
                 userAnswers[index] = (val === q.a);
                 
-                // Feedback visual silencioso (para que al revisar vea en qué falló)
                 if (val !== q.a) {
                     document.getElementById(`lbl-${index}-${val}`).classList.add('wrong');
                 }
                 document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct');
-                
             } else {
-                // Caso C: Se la dejó en blanco totalmente
-                userAnswers[index] = false; // Cuenta como fallo
-                // Marcamos cuál era la correcta para que aprenda
-                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct');
+                userAnswers[index] = false; // Fallo por no responder
+                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct'); // Mostrar cuál era
             }
             
-            // Bloqueamos visualmente todo para que parezca examen terminado
+            // Bloquear visualmente
             const card = document.getElementById(`card-${index}`);
             const inputs = card.querySelectorAll('input');
             const btn = card.querySelector('.check-btn');
@@ -326,14 +326,13 @@ const DB = [
             if(btn) btn.disabled = true;
         });
 
-        // --- CÁLCULO DE LA NOTA ---
-        // Contamos cuántos 'true' hay en las respuestas
-        const totalAciertos = Object.values(userAnswers).filter(respuesta => respuesta === true).length;
-        const totalPreguntas = questions.length; // 50
+        // Calcular Nota
+        const totalAciertos = Object.values(userAnswers).filter(r => r === true).length;
+        const totalPreguntas = questions.length;
         const notaFinal = (totalAciertos / totalPreguntas) * 10;
 
-        // Mostrar resultados en el Modal
-        document.getElementById('score-display').innerText = notaFinal.toFixed(1); // Ej: 7.5
+        // Mostrar
+        document.getElementById('score-display').innerText = notaFinal.toFixed(1);
         document.getElementById('res-correct').innerText = totalAciertos;
         document.getElementById('res-wrong').innerText = totalPreguntas - totalAciertos;
         
@@ -355,7 +354,6 @@ const DB = [
                 let m = Math.floor(timeLeft / 60);
                 let s = timeLeft % 60;
                 document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                
                 if(timeLeft <= 0) finishExam();
             }
         }, 1000);
@@ -366,31 +364,6 @@ const DB = [
         document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
     };
 
-    function updateProgress() {
-        const total = 50;
-        const current = Object.keys(userAnswers).length;
-        document.getElementById('q-count').innerText = `(${current}/${total})`;
-        document.getElementById('progress').style.width = `${(current/total)*100}%`;
-    }
-
-    window.finishExam = function() {
-        clearInterval(timer);
-        const score = Object.values(userAnswers).filter(v => v === true).length;
-        const note = (score / 50) * 10;
-        
-        document.getElementById('final-score').innerText = note.toFixed(1);
-        const verdict = document.getElementById('final-verdict');
-        
-        if(note >= 5) {
-            verdict.innerHTML = "<strong style='color:green'>¡APROBADO!</strong><br>Buen trabajo.";
-        } else {
-            verdict.innerHTML = "<strong style='color:red'>SUSPENSO</strong><br>Repasa el temario.";
-        }
-        
-        document.getElementById('results-modal').style.display = 'flex';
-    };
-
-    // ARRANCAR
     init();
 
 </script>
