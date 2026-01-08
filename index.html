@@ -3,96 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Examen Oficial WordPress CEI</title>
+    <title>Simulador Examen WP - Revisión Detallada</title>
     <style>
-        :root { --primary: #2271b1; --success: #d4edda; --success-text: #155724; --error: #f8d7da; --error-text: #721c24; --bg: #f0f0f1; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 120px; }
+        :root { --primary: #2271b1; --success: #28a745; --error: #dc3545; --bg: #f0f0f1; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: #3c434a; margin: 0; padding-bottom: 100px; }
         
         /* HEADER */
-        .header { position: fixed; top: 0; left: 0; right: 0; background: #fff; border-bottom: 1px solid #c3c4c7; padding: 15px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .logo { font-weight: 800; color: #135e96; font-size: 1.2rem; text-transform: uppercase; }
+        .header { position: fixed; top: 0; left: 0; right: 0; background: #fff; border-bottom: 1px solid #c3c4c7; padding: 15px 20px; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .logo { font-weight: 800; color: var(--primary); font-size: 1.2rem; }
         .timer-box { font-variant-numeric: tabular-nums; font-size: 1.4rem; font-weight: 700; color: #1d2327; background: #f0f0f1; padding: 5px 15px; border-radius: 4px; }
         
         /* LAYOUT */
-        .container { max-width: 800px; margin: 100px auto 20px; padding: 0 20px; }
+        .container { max-width: 800px; margin: 90px auto 20px; padding: 0 20px; }
 
-        /* TARJETAS */
-        .card { background: #fff; border: 1px solid #c3c4c7; padding: 25px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative; }
-        .q-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; color: #1d2327; }
+        /* TARJETAS PREGUNTA */
+        .card { background: #fff; border: 1px solid #c3c4c7; padding: 25px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .q-text { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; color: #1d2327; }
         
         /* OPCIONES */
         .option-label { display: flex; align-items: flex-start; gap: 12px; padding: 12px; border: 2px solid #f0f0f1; border-radius: 6px; cursor: pointer; transition: all 0.2s; margin-bottom: 10px; }
-        .option-label:hover { background: #f6f7f7; border-color: #2271b1; }
-        .option-label input { margin-top: 5px; transform: scale(1.3); cursor: pointer; accent-color: #2271b1; }
+        .option-label:hover { background: #f6f7f7; border-color: var(--primary); }
+        .option-label input { margin-top: 5px; transform: scale(1.3); cursor: pointer; accent-color: var(--primary); }
         
-        /* ESTADOS DE CORRECCIÓN (Solo visibles al final) */
-        .card.correct-card { border-left: 6px solid #28a745; }
-        .card.wrong-card { border-left: 6px solid #dc3545; }
-
-        .option-label.correct-answer { background: var(--success) !important; border-color: #c3e6cb !important; color: var(--success-text); font-weight: 600; }
-        .option-label.user-wrong { background: var(--error) !important; border-color: #f5c6cb !important; color: var(--error-text); text-decoration: line-through; opacity: 0.8; }
-        
-        .explanation-box { display: none; margin-top: 20px; padding: 15px; background: #fff; border-top: 1px solid #eee; font-size: 0.95rem; color: #50575e; }
-        .explanation-box strong { display: block; margin-bottom: 5px; }
-
         /* BOTÓN FINAL */
         .fab-finish { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #d63638; color: white; padding: 15px 40px; border-radius: 50px; border: none; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(214, 54, 56, 0.4); z-index: 999; transition: transform 0.2s; white-space: nowrap; }
         .fab-finish:hover { transform: translateX(-50%) scale(1.05); background: #b32d2e; }
 
         /* MODAL RESULTADOS */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; text-align: center; }
-        .modal-content { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); max-width: 500px; width: 90%; border: 1px solid #ddd; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 800px; max-height: 90vh; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         
-        .score-circle { width: 150px; height: 150px; background: #2271b1; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3.5rem; font-weight: 800; margin: 0 auto 20px; box-shadow: 0 5px 15px rgba(34, 113, 177, 0.3); }
-        .verdict { font-size: 2rem; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; }
-        .stats { display: flex; justify-content: space-around; margin: 20px 0; background: #f9f9f9; padding: 15px; border-radius: 8px; }
-        .stat-item span { display: block; font-weight: bold; font-size: 1.2rem; }
-        .stat-item label { font-size: 0.85rem; text-transform: uppercase; color: #666; }
+        .modal-header { padding: 20px; background: #f9f9f9; border-bottom: 1px solid #eee; text-align: center; }
+        .score-big { font-size: 2.5rem; font-weight: 800; margin: 10px 0; color: var(--primary); }
+        .verdict { font-size: 1.5rem; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
+        
+        .modal-body { padding: 20px; overflow-y: auto; flex-grow: 1; text-align: left; background: #f0f0f1; }
+        
+        .btn-restart { background: var(--primary); color: white; border: none; padding: 15px; font-size: 1.1rem; cursor: pointer; width: 100%; font-weight: bold; }
+        .btn-restart:hover { background: #135e96; }
 
-        .btn-restart { background: #135e96; color: white; border: none; padding: 15px 30px; font-size: 1.1rem; cursor: pointer; border-radius: 6px; width: 100%; margin-top: 10px; font-weight: 600; }
-        .btn-restart:hover { background: #0a4b78; }
+        /* ESTILOS DE LA REVISIÓN DETALLADA */
+        .review-item { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 5px solid #ccc; font-size: 0.95rem; }
+        .review-item.r-correct { border-left-color: var(--success); background: #f4fff7; }
+        .review-item.r-wrong { border-left-color: var(--error); background: #fff5f5; }
+        
+        .r-question { font-weight: bold; margin-bottom: 10px; display: block; color: #333; }
+        .r-user-ans { display: block; margin-bottom: 5px; }
+        .r-correct-ans { display: block; margin-bottom: 5px; color: var(--success); font-weight: 600; }
+        .r-explanation { display: block; margin-top: 10px; font-style: italic; color: #666; font-size: 0.9rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 5px; }
+
+        .tag-correct { color: var(--success); font-weight: bold; }
+        .tag-wrong { color: var(--error); font-weight: bold; text-decoration: line-through; }
 
         /* Progress Bar */
         .progress-container { position: fixed; top: 69px; left: 0; width: 100%; height: 4px; background: #e0e0e0; z-index: 998; }
-        .progress-bar { height: 100%; background: #2271b1; width: 0%; transition: width 0.3s; }
-
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s; }
     </style>
 </head>
 <body>
 
     <div id="result-modal" class="modal">
         <div class="modal-content">
-            <h2 style="margin-top:0; color:#444;">RESULTADO FINAL</h2>
-            
-            <div id="score-circle" class="score-circle">0</div>
-            <div id="verdict-text" class="verdict">APTO</div>
-            
-            <div class="stats">
-                <div class="stat-item"><span id="res-correct" style="color:#28a745">0</span><label>Aciertos</label></div>
-                <div class="stat-item"><span id="res-wrong" style="color:#dc3545">0</span><label>Fallos</label></div>
-                <div class="stat-item"><span id="res-blank" style="color:#666">0</span><label>En Blanco</label></div>
+            <div class="modal-header">
+                <h2 style="margin:0;">RESULTADO</h2>
+                <div id="score-display" class="score-big">0 / 50</div>
+                <div id="verdict-text" class="verdict">...</div>
+                <div style="font-size:0.9rem; color:#666;">
+                    ✅ <span id="res-correct">0</span> | 
+                    ❌ <span id="res-wrong">0</span>
+                </div>
             </div>
+            
+            <div class="modal-body" id="detailed-review">
+                </div>
 
-            <p style="color:#666; font-size:0.9rem;">Se han calificado 50 preguntas.</p>
-            <button class="btn-restart" onclick="location.reload()">GENERAR NUEVO EXAMEN</button>
+            <button class="btn-restart" onclick="location.reload()">REPETIR EXAMEN (NUEVAS PREGUNTAS)</button>
         </div>
     </div>
 
     <header class="header">
-        <div class="logo">SIMULADOR WP</div>
+        <div class="logo">EXAMEN WP</div>
         <div class="timer-box" id="timer">45:00</div>
     </header>
     <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
 
-    <div class="container" id="quiz-container">
-        </div>
+    <div class="container" id="quiz-container"></div>
 
-    <button class="fab-finish" onclick="finishExam()">FINALIZAR Y VER NOTA</button>
+    <button class="fab-finish" onclick="finishExam()">FINALIZAR Y CALIFICAR</button>
 
 <script>
-    // --- POOL DE PREGUNTAS (120 - NIVEL MEDIO/TÉCNICO) ---
-    const DB = [
-        // BLOQUE 1: CONCEPTOS BÁSICOS
+// BLOQUE 1: CONCEPTOS BÁSICOS
+const DB = [
         { q: "¿Cuál es la diferencia principal entre una Entrada (Post) y una Página?", o: ["No hay diferencia", "Las Entradas son para noticias (cronológicas) y las Páginas para contenido estático (Quiénes somos)", "Las Páginas no admiten fotos", "Las Entradas son para vender"], a: 1, e: "Entradas = Blog/Noticias. Páginas = Estructura fija de la web." },
         { q: "¿Qué es un Plugin?", o: ["Un diseño", "Una herramienta que instalas para añadir nuevas funciones a WordPress (como un formulario o tienda)", "Un virus", "La base de datos"], a: 1, e: "Son como las apps de tu móvil: añaden funcionalidades extra." },
         { q: "¿Qué es un Tema (Theme)?", o: ["La apariencia visual de la web (diseño, colores, tipografía)", "El panel de control", "Un tipo de usuario", "El hosting"], a: 0, e: "Es el encargado de definir cómo se 've' tu web." },
@@ -203,170 +204,143 @@
         { q: "Si cambias de tema, ¿pierdes tus entradas?", o: ["Sí", "No, el contenido sigue en la base de datos, solo cambia el diseño", "Solo las fotos", "A veces"], a: 1, e: "El contenido y el diseño están separados." }
     ];
 
-    // VARIABLES DE ESTADO
     let questions = []; 
-    let userAnswers = {};
     let timer;
-    let timeLeft = 45 * 60; // 45 min
-    let isPaused = false;
+    let timeLeft = 45 * 60; 
 
-    // INICIALIZACIÓN
+    // Inicializar
     function init() {
-        // 1. Barajar y coger 50
+        if(typeof DB === 'undefined') return alert("⚠️ ERROR: No has pegado las preguntas en el código.");
+        
+        // Coger 50 aleatorias
         questions = DB.sort(() => 0.5 - Math.random()).slice(0, 50);
         
-        // 2. Renderizar
         const container = document.getElementById('quiz-container');
         container.innerHTML = ""; 
         
         questions.forEach((q, index) => {
             let html = `
                 <div class="card" id="card-${index}">
-                    <div class="q-text">${index + 1}. ${q.q}</div>
+                    <div class="q-text"><span style="color:#2271b1">#${index + 1}</span> ${q.q}</div>
                     <div class="options-group">
             `;
             
+            // Indices para opciones (0,1,2,3)
             let indices = q.o.map((_, i) => i);
 
             indices.forEach(i => {
                 html += `
-                    <label class="option-label" id="lbl-${index}-${i}">
+                    <label class="option-label">
                         <input type="radio" name="q_${index}" value="${i}">
                         ${q.o[i]}
                     </label>
                 `;
             });
 
-            html += `
-                    </div>
-                    <div class="explanation-box" id="exp-${index}"></div>
-                </div>
-            `;
+            html += `</div></div>`;
             container.innerHTML += html;
         });
 
         startTimer();
         
-        // Listener de progreso
-        document.querySelectorAll('input[type="radio"]').forEach(input => {
-            input.addEventListener('change', updateProgress);
+        // Barra de progreso
+        document.querySelectorAll('input').forEach(i => {
+            i.addEventListener('change', () => {
+                const answered = document.querySelectorAll('input:checked').length;
+                document.getElementById('progress').style.width = `${(answered/50)*100}%`;
+            });
         });
     }
 
-    // 2. CORRECCIÓN FINAL CON TUS BAREMOS EXACTOS
+    // FINALIZAR Y MOSTRAR DETALLES
     window.finishExam = function() {
         clearInterval(timer);
+        
+        let correctCount = 0;
+        let reviewHTML = "";
 
+        // Recorremos las 50 preguntas
         questions.forEach((q, index) => {
-            const card = document.getElementById(`card-${index}`);
-            const expBox = document.getElementById(`exp-${index}`);
             const selected = document.querySelector(`input[name="q_${index}"]:checked`);
+            let userVal = selected ? parseInt(selected.value) : -1; // -1 si no respondió
+            let isCorrect = (userVal === q.a);
             
-            // Lógica de corrección visual
-            if (selected) {
-                const val = parseInt(selected.value);
-                userAnswers[index] = (val === q.a);
-                
-                if (val === q.a) {
-                    // Acertó
-                    document.getElementById(`lbl-${index}-${val}`).classList.add('correct-answer');
-                    card.classList.add('correct-card');
-                    expBox.innerHTML = `<strong>✅ ¡CORRECTO!</strong><br>${q.e}`;
-                } else {
-                    // Falló
-                    document.getElementById(`lbl-${index}-${val}`).classList.add('user-wrong');
-                    document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct-answer');
-                    card.classList.add('wrong-card');
-                    expBox.innerHTML = `<strong>❌ INCORRECTO</strong><br>La respuesta correcta era la marcada en verde.<br><em>${q.e}</em>`;
-                }
-            } else {
-                // En blanco
-                userAnswers[index] = false;
-                document.getElementById(`lbl-${index}-${q.a}`).classList.add('correct-answer');
-                card.classList.add('wrong-card');
-                expBox.innerHTML = `<strong>⚪ SIN RESPONDER</strong><br>La respuesta correcta era la marcada en verde.<br><em>${q.e}</em>`;
-            }
+            if (isCorrect) correctCount++;
+
+            // Generar HTML del reporte detallado
+            let statusClass = isCorrect ? "r-correct" : "r-wrong";
+            let icon = isCorrect ? "✅" : "❌";
             
-            expBox.style.display = "block";
-            
-            // Bloquear inputs
-            card.querySelectorAll('input').forEach(i => i.disabled = true);
+            // Texto de la respuesta del usuario
+            let userText = (userVal !== -1) 
+                ? `<span class="${isCorrect ? 'tag-correct' : 'tag-wrong'}">${q.o[userVal]}</span>` 
+                : `<span style="color:#666; font-weight:bold;">(En blanco)</span>`;
+
+            // HTML de cada bloque de revisión
+            reviewHTML += `
+                <div class="review-item ${statusClass}">
+                    <span class="r-question">${index + 1}. ${q.q}</span>
+                    <span class="r-user-ans">Tu respuesta: ${userText} ${icon}</span>
+                    ${!isCorrect ? `<span class="r-correct-ans">Solución: ${q.o[q.a]}</span>` : ''}
+                    <span class="r-explanation">💡 ${q.e}</span>
+                </div>
+            `;
         });
 
-        // CÁLCULO DE NOTA (SEGÚN TU BAREMO)
-        const totalAciertos = Object.values(userAnswers).filter(r => r === true).length;
-        const totalFallos = questions.length - totalAciertos;
-        const totalBlank = 50 - Object.keys(userAnswers).length; // Ajuste por si el array userAnswers no se llenó
-        
-        let mensaje = "";
+        // CALCULAR NOTA Y BAREMO
+        // Escala: 30-34 Apto, 35-39 Bien, 40-44 Notable, 45-50 Sobresaliente
+        let verdict = "";
         let color = "";
-        let colorCode = "";
 
-        if (totalAciertos >= 45) { // 45 a 50
-            mensaje = "SOBRESALIENTE 🏆";
-            colorCode = "#00a32a";
-        } else if (totalAciertos >= 40) { // 40 a 44
-            mensaje = "NOTABLE 🌟";
-            colorCode = "#2271b1";
-        } else if (totalAciertos >= 35) { // 35 a 39
-            mensaje = "BIEN 👍";
-            colorCode = "#2271b1";
-        } else if (totalAciertos >= 30) { // 30 a 34
-            mensaje = "APTO 👌";
-            colorCode = "#e6a800";
+        if (correctCount >= 45) {
+            verdict = "SOBRESALIENTE 🏆";
+            color = "#28a745";
+        } else if (correctCount >= 40) {
+            verdict = "NOTABLE 🌟";
+            color = "#17a2b8";
+        } else if (correctCount >= 35) {
+            verdict = "BIEN 👍";
+            color = "#2271b1";
+        } else if (correctCount >= 30) {
+            verdict = "APTO 👌";
+            color = "#fd7e14"; // Naranja
         } else {
-            mensaje = "NO APTO / SUSPENSO ❌";
-            colorCode = "#d63638";
+            verdict = "NO APTO ❌";
+            color = "#dc3545";
         }
 
-        // Mostrar en Modal
-        document.getElementById('score-circle').innerText = totalAciertos;
-        document.getElementById('score-circle').style.background = colorCode;
+        // PINTAR RESULTADOS
+        document.getElementById('score-display').innerText = `${correctCount} / 50`;
+        document.getElementById('score-display').style.color = color;
         
-        const verdictEl = document.getElementById('verdict-text');
-        verdictEl.innerText = mensaje;
-        verdictEl.style.color = colorCode;
+        const vText = document.getElementById('verdict-text');
+        vText.innerText = verdict;
+        vText.style.color = color;
 
-        document.getElementById('res-correct').innerText = totalAciertos;
-        // Fallos totales (incluye blancos) para el contador simple
-        document.getElementById('res-wrong').innerText = 50 - totalAciertos; 
-        
-        // Contar blancos reales para estadística
-        let realBlanks = 0;
-        for(let i=0; i<50; i++) {
-            if(!document.querySelector(`input[name="q_${i}"]:checked`)) realBlanks++;
-        }
-        document.getElementById('res-blank').innerText = realBlanks;
-        document.getElementById('res-wrong').innerText = (50 - totalAciertos) - realBlanks; // Ajustar fallos marcados
+        document.getElementById('res-correct').innerText = correctCount;
+        document.getElementById('res-wrong').innerText = 50 - correctCount;
 
+        // Insertar el reporte detallado
+        document.getElementById('detailed-review').innerHTML = reviewHTML;
+
+        // Mostrar Modal
         document.getElementById('result-modal').style.display = 'flex';
     };
 
     function startTimer() {
         timer = setInterval(() => {
-            if(!isPaused) {
-                timeLeft--;
-                let m = Math.floor(timeLeft / 60);
-                let s = timeLeft % 60;
-                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                if(timeLeft <= 0) finishExam();
-            }
+            timeLeft--;
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            if(timeLeft <= 0) finishExam();
         }, 1000);
     }
 
-    window.togglePause = function() {
-        isPaused = !isPaused;
-        document.getElementById('pause-modal').style.display = isPaused ? 'flex' : 'none';
+    // Arrancar al cargar (si DB existe)
+    window.onload = function() {
+        if(typeof DB !== 'undefined') init();
     };
-
-    function updateProgress() {
-        const total = 50;
-        const answered = document.querySelectorAll('input[type="radio"]:checked').length;
-        document.getElementById('progress').style.width = `${(answered/total)*100}%`;
-    }
-
-    // Arrancar
-    init();
 
 </script>
 </body>
