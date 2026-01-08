@@ -152,6 +152,95 @@
         { q: "¿Qué es DNS?", o: ["Sistema que traduce dominios a IPs", "Un servidor", "Un plugin", "Un error"], a: 0, e: "La agenda telefónica de internet." },
         { q: "¿Qué es PHP?", o: ["Lenguaje de programación de WordPress", "Un diseño", "Una base de datos", "Un navegador"], a: 0, e: "Lenguaje del lado del servidor." },
         { q: "¿Qué es MySQL?", o: ["El sistema de base de datos de WP", "Un lenguaje", "Un plugin", "Un tema"], a: 0, e: "Donde se guardan los datos (texto, opciones)." }
+        // --- BLOQUE 1: "PREGUNTAS DE EXAMEN" DE RAFA (Basado en sus apuntes) ---
+        { q: "Según los apuntes de Rafa, ¿en qué archivo exacto se guardan el nombre de la BD, usuario y contraseña?", o: ["wp-content.php", "wp-admin.php", "wp-config.php", "general-settings.php"], a: 2, e: "Rafa lo marca como 'Pregunta de Examen'. Es el archivo de configuración vital." },
+        { q: "¿Qué ajuste de Enlaces Permanentes es CRUCIAL para el SEO según vimos en clase?", o: ["Simple (?p=123)", "Nombre de la entrada (Post name)", "Numérico", "Mes y nombre"], a: 1, e: "Es la configuración obligatoria para que Google indexe las URLs amigablemente." },
+        { q: "En LocalWP, ¿qué funcionalidad permite guardar una web configurada (plugins+tema) para usarla de plantilla futura?", o: ["Live Link", "One Click Admin", "Blueprints", "Clone Site"], a: 2, e: "Rafa enfatiza esto para ahorrar tiempo en nuevos proyectos." },
+        { q: "Si al hacer scroll dos cabeceras sticky se solapan, ¿qué propiedad de Elementor soluciona el problema?", o: ["Z-Index", "Margin-top", "Offset (Desplazamiento)", "Padding"], a: 2, e: "El Offset determina a cuántos píxeles del borde se activa el efecto sticky." },
+        { q: "Para cumplir el RGPD, ¿cómo debe estar la casilla de aceptación en un formulario?", o: ["Pre-marcada por defecto", "Desmarcada y requerir acción manual", "Oculta", "Visible pero opcional"], a: 1, e: "Es obligatorio legalmente que el usuario haga una acción afirmativa (clic)." },
+        { q: "¿Cuál es la 'Regla de Oro' sobre el peso de las imágenes mencionada en clase?", o: ["Menos de 1 MB", "Menos de 500 KB", "Menos de 200 KB", "No importa si usas Lazy Load"], a: 2, e: "Para asegurar una carga rápida y buena puntuación en PageSpeed." },
+        { q: "¿Qué archivo debemos editar para forzar redirecciones 301 y HTTPS a nivel de servidor?", o: [".htaccess", "wp-config.php", "robots.txt", "index.php"], a: 0, e: "Es el archivo de configuración del servidor Apache." },
+        { q: "¿Qué medida de seguridad es OBLIGATORIA durante la instalación de WordPress?", o: ["Instalar Wordfence", "Cambiar el prefijo de la base de datos (wp_)", "Usar un tema de pago", "Ocultar el login"], a: 1, e: "Evita ataques automatizados a tablas por defecto como 'wp_users'." },
+        { q: "¿Qué tipo de producto de WooCommerce se usa para vender un 'Pack de Vajilla' (Platos + Vasos)?", o: ["Producto Variable", "Producto Agrupado", "Producto Simple", "Producto Externo"], a: 1, e: "Permite mostrar varios productos simples juntos en una misma ficha." },
+        { q: "¿Por qué NO aparece la pestaña de 'Impuestos' en WooCommerce recién instalado?", o: ["Es de pago", "Hay que activarla primero en Ajustes > General", "Es un error", "Solo aparece si vendes en físico"], a: 1, e: "WooCommerce oculta opciones complejas hasta que indicas que las necesitas." },
+
+        // --- BLOQUE 2: ELEMENTOR PRO Y MAQUETACIÓN AVANZADA ---
+        { q: "En el Theme Builder, ¿cuál es la diferencia entre 'Archive' y 'Loop Item'?", o: ["Son lo mismo", "Archive controla la página de resultados; Loop Item el diseño de cada tarjeta individual", "Archive es para el blog, Loop Item para la tienda", "Loop Item es un widget"], a: 1, e: "El Loop Item diseña la 'fichita' que se repite dentro del Archive." },
+        { q: "¿Qué selector CSS usamos en Elementor (Custom CSS) para referirnos al widget actual?", o: [".elementor-widget", "#this", "selector", ".mi-clase"], a: 2, e: "La palabra clave 'selector' facilita aplicar CSS solo a ese elemento sin buscar su ID." },
+        { q: "¿Qué valor de Z-Index asegura que un elemento (como un popup o menú) esté encima de todo?", o: ["1", "10", "999 o superior", "-1"], a: 2, e: "Cuanto más alto el índice Z, más cerca del 'ojo' del usuario está el elemento." },
+        { q: "Si quieres ocultar una sección solo en Móvil, ¿dónde vas?", o: ["Estilo > Visibilidad", "Avanzado > Adaptabilidad (Responsive)", "Disposición > Ancho", "No se puede"], a: 1, e: "Desde allí puedes activar/desactivar la visibilidad por dispositivo." },
+        { q: "¿Qué son los 'Global Colors'?", o: ["Colores de la bandera", "Variables de sistema que cambian el color en toda la web si editas el origen", "Colores de fondo", "Una paleta de Photoshop"], a: 1, e: "Esencial para mantener la coherencia del Sistema de Diseño." },
+        { q: "¿Qué hace el widget 'Post Content' en una plantilla de Single Post?", o: ["Muestra el título", "Muestra dinámicamente el contenido escrito en el editor de WordPress (Gutenberg)", "Muestra la fecha", "Muestra comentarios"], a: 1, e: "Es el widget obligatorio para que se vea lo que escribes en la entrada." },
+        { q: "¿Cómo se llama la función para ver los cambios anteriores si cometes un error diseñando?", o: ["Control Z", "Historial / Revisiones", "Backup", "Restaurar sistema"], a: 1, e: "Elementor guarda un historial de acciones de la sesión actual." },
+        
+        // --- BLOQUE 3: WOOCOMMERCE TÉCNICO ---
+        { q: "Si vendes un Ebook PDF, ¿qué configuración debe tener el producto?", o: ["Solo Virtual", "Virtual y Descargable", "Solo Descargable", "Simple"], a: 1, e: "Virtual elimina el envío; Descargable habilita la subida del archivo." },
+        { q: "¿Qué son los 'Endpoints' en WooCommerce?", o: ["Puntos de finalización de compra", "Las terminaciones de URL para las páginas de 'Mi Cuenta' (ej: /pedidos, /descargas)", "Los botones", "Los precios"], a: 1, e: "Permiten navegar por las secciones del área privada del cliente." },
+        { q: "Para crear un producto con Talla S, M y L, primero debes crear...", o: ["Las variaciones", "Los atributos", "El precio", "La foto"], a: 1, e: "Primero defines el Atributo (Talla) y sus términos, luego generas las Variaciones." },
+        { q: "¿Qué plugin recomienda Rafa para mejorar visualmente los selectores de variaciones?", o: ["WooCommerce Colors", "Variation Swatches", "Elementor Pro", "JetEngine"], a: 1, e: "Convierte los desplegables feos en botones de colores o etiquetas." },
+        { q: "¿Es obligatorio configurar Stripe/Redsys para aprobar el proyecto?", o: ["Sí, 100%", "No, se permiten métodos como Transferencia o Contrareembolso", "Sí, pero en modo test", "No hace falta método de pago"], a: 1, e: "Según criterios, basta con que el proceso de compra se complete, no que se cobre real." },
+        
+        // --- BLOQUE 4: WORDPRESS CORE & ARCHIVOS ---
+        { q: "¿Qué ocurre si actualizas un tema Padre sin tener un tema Hijo?", o: ["Nada malo", "Mejoras la velocidad", "Pierdes todas las modificaciones de código (CSS/PHP) hechas en los archivos del tema", "Se rompe la base de datos"], a: 2, e: "Por eso el Child Theme es obligatorio si tocas código." },
+        { q: "¿Qué es el 'Slug'?", o: ["Un bicho", "La parte amigable de la URL que identifica el recurso (ej: /contacto)", "El dominio", "El título"], a: 1, e: "Debe ser único y descriptivo para el SEO." },
+        { q: "¿Dónde se gestionan los menús por defecto?", o: ["Ajustes > Menús", "Apariencia > Menús", "Herramientas > Menús", "Plugins"], a: 1, e: "Ubicación estándar del core de WordPress." },
+        { q: "¿Qué diferencia hay entre una Página y una Entrada?", o: ["Ninguna", "Páginas = Estáticas/Jerárquicas; Entradas = Cronológicas/Taxonomías", "Páginas para móvil, Entradas para PC", "Entradas no tienen autor"], a: 1, e: "Concepto base de la arquitectura de información de WP." },
+        { q: "¿Qué es un CPT (Custom Post Type)?", o: ["Un post normal", "Un tipo de contenido personalizado (ej: Proyecto, Receta) diferente a entradas/páginas", "Un plugin", "Un usuario"], a: 1, e: "Necesario para el portfolio o catálogos complejos." },
+        { q: "¿Qué hace la función 'Disuadir a los motores de búsqueda'?", o: ["Bloquea hackers", "Añade una etiqueta 'noindex' para que Google ignore la web", "Borra la web", "Mejora el SEO"], a: 1, e: "Se usa solo durante el desarrollo para no indexar webs a medio hacer." },
+        { q: "¿Qué es el 'Pantallazo Blanco de la Muerte' (WSOD)?", o: ["Se rompió el monitor", "Error crítico de PHP o memoria que impide cargar la interfaz", "Virus", "Modo oscuro"], a: 1, e: "Suele requerir acceso FTP para desactivar el plugin conflictivo." },
+        
+        // --- BLOQUE 5: IMÁGENES Y WPO (Optimización) ---
+        { q: "¿Qué es Squoosh?", o: ["Un juego", "Herramienta de Google para comprimir imágenes manualmente antes de subir", "Un plugin de caché", "Un tema"], a: 1, e: "Recomendada en el curso para limpiar imágenes." },
+        { q: "¿Para qué sirve el atributo ALT en una imagen?", o: ["Es el título", "Para accesibilidad (ciegos) y SEO (Google entiende la foto)", "Para descargarla", "Para el borde"], a: 1, e: "Si no lo pones, penalizas en SEO y accesibilidad." },
+        { q: "¿Qué formato de imagen de nueva generación recomienda Google?", o: ["BMP", "TIFF", "WebP", "GIF"], a: 2, e: "Pesa mucho menos que JPG/PNG con la misma calidad." },
+        { q: "¿Qué es 'Lazy Load'?", o: ["Carga perezosa: las imágenes cargan solo cuando el usuario hace scroll hacia ellas", "Web lenta", "Carga inmediata", "Un error"], a: 0, e: "Mejora drásticamente la velocidad inicial de la web." },
+        { q: "¿Qué plugin de caché se menciona como opción Premium en el manual?", o: ["W3 Total Cache", "WP Rocket", "Autoptimize", "Super Cache"], a: 1, e: "Es el estándar de pago para WPO." },
+        
+        // --- BLOQUE 6: SEGURIDAD Y LEGALIDAD ---
+        { q: "¿Qué es un ataque de fuerza bruta?", o: ["Golpear el servidor", "Intentos masivos automatizados de adivinar usuario y contraseña", "Un virus SQL", "Spam"], a: 1, e: "Se mitiga limitando los intentos de login." },
+        { q: "Para cambiar la URL de acceso (/wp-admin), ¿qué plugin usamos?", o: ["WooCommerce", "WPS Hide Login (o similar)", "Elementor", "Contact Form 7"], a: 1, e: "Seguridad por oscuridad: ocultar la puerta reduce ataques." },
+        { q: "¿Qué es el archivo robots.txt?", o: ["Un virus", "Archivo que indica a los bots qué partes de la web pueden rastrear", "El mapa del sitio", "Configuración de estilo"], a: 1, e: "Controla el presupuesto de rastreo de Google." },
+        { q: "¿Qué documento legal es obligatorio tener visible en el pie de página?", o: ["Política de Privacidad", "El CV", "La foto del CEO", "Instagram"], a: 0, e: "Requisito legal indispensable." },
+        { q: "¿Qué hace un plugin de Backup como All-in-One WP Migration?", o: ["Limpia virus", "Empaqueta base de datos y archivos en un solo fichero para restaurar", "Traduce", "Optimiza CSS"], a: 1, e: "Vital para no perder el trabajo antes de tocar cosas peligrosas." },
+
+        // --- BLOQUE 7: PREGUNTAS TRAMPA / DETALLES TÉCNICOS ---
+        { q: "¿Qué rol de usuario puede editar sus posts pero NO publicar sin aprobación?", o: ["Autor", "Colaborador", "Editor", "Suscriptor"], a: 1, e: "El Colaborador escribe, pero requiere que un Editor/Admin apruebe." },
+        { q: "¿Qué rol de usuario puede gestionar los contenidos de todos los demás pero NO tocar plugins?", o: ["Admin", "Editor", "Autor", "Colaborador"], a: 1, e: "El Editor es el jefe de contenidos, no el jefe técnico." },
+        { q: "¿Qué es un Shortcode?", o: ["Un código corto entre corchetes [ ]", "Un error PHP", "Un enlace", "Una contraseña"], a: 0, e: "Ej: [contact-form-7] invoca una funcionalidad compleja." },
+        { q: "¿Qué hook se usa para inyectar código (como Analytics) en la cabecera?", o: ["wp_footer", "wp_head", "the_content", "admin_init"], a: 1, e: "Se coloca justo antes del cierre de </head>." },
+        { q: "¿Qué tabla de la BD guarda la URL del sitio (siteurl)?", o: ["wp_posts", "wp_users", "wp_options", "wp_terms"], a: 2, e: "Tabla crítica para la configuración global." },
+        { q: "¿Qué es una 'Miga de pan' (Breadcrumb)?", o: ["Comida", "Rastro de navegación (Inicio > Tienda > Producto)", "Un menú footer", "Un widget"], a: 1, e: "Mejora la UX y el enlazado interno SEO." },
+        { q: "Si la web da error 404 en todas las páginas internas salvo la Home, ¿qué haces?", o: ["Reinstalar WordPress", "Ir a Enlaces Permanentes y guardar cambios", "Borrar el tema", "Cambiar de hosting"], a: 1, e: "Al guardar, se regenera el archivo .htaccess solucionando el error." },
+        { q: "¿Qué es un Favicon?", o: ["El logo grande", "El icono pequeño en la pestaña del navegador", "El footer", "Un botón"], a: 1, e: "Identidad de marca." },
+        { q: "¿Qué es un Tema Padre?", o: ["Un tema viejo", "Un tema completo del que hereda un tema hijo", "Un plugin", "Una página"], a: 1, e: "Contiene todos los archivos de plantilla originales." },
+        { q: "¿Qué significa 'Responsive Breakpoint'?", o: ["Cuando la web se rompe", "El ancho en píxeles donde el diseño cambia (ej: de PC a Tablet)", "Un error", "El menú"], a: 1, e: "Punto de corte para las media queries CSS." },
+
+        // --- BLOQUE 8: MÁS CONCEPTOS DE LOS MANUALES ---
+        { q: "¿Qué es un Widget en WordPress clásico?", o: ["Una página", "Un bloque de contenido funcional para áreas específicas (sidebar/footer)", "Un plugin", "Un post"], a: 1, e: "Pequeños módulos como 'Buscar', 'Categorías', 'HTML personalizado'." },
+        { q: "¿Qué diferencia hay entre Categorías y Etiquetas?", o: ["Ninguna", "Categorías son jerárquicas (padre/hijo), Etiquetas no", "Etiquetas son obligatorias", "Categorías son para páginas"], a: 1, e: "Las categorías estructuran, las etiquetas describen detalles." },
+        { q: "¿Qué es el 'Excerpt'?", o: ["El extracto o resumen manual de una entrada", "El título", "La foto destacada", "El autor"], a: 0, e: "Se muestra en los listados de blog en lugar del texto completo." },
+        { q: "¿Para qué sirve el plugin 'Loco Translate'?", o: ["Traducir la web al chino automáticamente", "Traducir cadenas internas de temas/plugins (.po/.mo)", "Mover la web", "Seguridad"], a: 1, e: "Para cambiar 'Read more' por 'Leer más'." },
+        { q: "¿Qué es un Mockup?", o: ["Un diseño visual estático previo al desarrollo", "Una copia de seguridad", "Un virus", "Un código"], a: 0, e: "Fase de diseño UX/UI." },
+        { q: "¿Qué es el 'CMS'?", o: ["Código Muy Seguro", "Content Management System (Gestor de Contenidos)", "Cascading Style", "Cliente"], a: 1, e: "WordPress es un CMS." },
+        { q: "¿Qué es el 'Backend'?", o: ["La parte visible", "El panel de administración", "El diseño", "El usuario"], a: 1, e: "Donde trabaja el administrador." },
+        { q: "¿Qué es el 'Frontend'?", o: ["El panel de control", "La parte pública que ve el visitante", "La base de datos", "El servidor"], a: 1, e: "El resultado final renderizado." },
+        { q: "Si usas un constructor visual, ¿puedes desactivarlo y mantener el diseño intacto?", o: ["Sí, siempre", "No, suele dejar 'shortcodes' basura o perder el estilo", "Sí, WP lo guarda", "Depende del hosting"], a: 1, e: "Lock-in effect: quedas atado al plugin (Elementor/Divi)." },
+        { q: "¿Qué es un iframe?", o: ["Un marco para incrustar contenido externo (YouTube/Maps)", "Una imagen", "Un plugin", "Un error"], a: 0, e: "Etiqueta HTML estándar." },
+        { q: "¿Qué es el 'Alt Text'?", o: ["Texto alternativo", "Texto alto", "Texto oculto", "Título"], a: 0, e: "SEO y Accesibilidad." },
+        { q: "¿Qué es 'HTTPS'?", o: ["Protocolo Seguro (SSL)", "Web lenta", "Web antigua", "Dominio"], a: 0, e: "Cifrado de datos." },
+        { q: "¿Qué es 'DNS'?", o: ["Sistema de Nombres de Dominio (traduce dominio a IP)", "Un servidor", "Un plugin", "Un error"], a: 0, e: "La agenda de internet." },
+        { q: "¿Qué es 'PHP'?", o: ["Lenguaje del lado del servidor de WP", "Diseño", "Base de datos", "Navegador"], a: 0, e: "El motor lógico de WordPress." },
+        { q: "¿Qué es 'MySQL'?", o: ["La base de datos", "El lenguaje", "El plugin", "El tema"], a: 0, e: "Donde se guardan los datos." },
+        { q: "¿Qué es el 'Padding'?", o: ["Relleno interno", "Margen externo", "Borde", "Sombra"], a: 0, e: "Espacio dentro de la caja." },
+        { q: "¿Qué es el 'Margin'?", o: ["Espacio externo", "Relleno", "Borde", "Color"], a: 0, e: "Separación entre cajas." },
+        { q: "¿Qué es un 'Landing Page'?", o: ["Página de aterrizaje para conversión", "La home", "El blog", "Contacto"], a: 0, e: "Objetivo único: convertir." },
+        { q: "¿Qué es un 'CTA'?", o: ["Call to Action (Llamada a la acción)", "Centro técnico", "Contacto", "Código"], a: 0, e: "Botón para que el usuario haga algo." },
+        { q: "¿Qué es la Biblioteca de Medios?", o: ["Donde están las fotos", "Un plugin", "Una página", "Un menú"], a: 0, e: "Gestión de archivos." },
+        { q: "¿Qué es un 'User Role'?", o: ["Permisos de usuario", "Un plugin", "Un tema", "Un post"], a: 0, e: "Define qué puede hacer cada quién." },
+        { q: "¿Qué es el 'Sidebar'?", o: ["Barra lateral", "Pie de página", "Cabecera", "Menú"], a: 0, e: "Área de widgets clásica." },
+        { q: "¿Qué es 'Gutenberg'?", o: ["Editor de bloques", "Un tema", "Un plugin", "Un hosting"], a: 0, e: "El editor actual de WP." },
+        { q: "¿Qué es un 'Plugin'?", o: ["Software que añade funcionalidad extra", "Un diseño", "Un texto", "Una foto"], a: 0, e: "Apps para tu WordPress." },
+        { q: "¿Qué es un 'Theme'?", o: ["La capa visual/diseño", "La base de datos", "El contenido", "El servidor"], a: 0, e: "Controla la apariencia." }
     ];
 
     // VARIABLES DE ESTADO
