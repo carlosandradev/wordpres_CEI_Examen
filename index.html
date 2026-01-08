@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador WordPress CEI - MASTER POOL</title>
+    <style>
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; color: #1d2327; line-height: 1.5; margin: 0; padding-bottom: 60px; }
+        
+        /* Header Flotante */
+        .sticky-header {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: #2271b1; color: white; padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1000;
+        }
+        .timer-box { font-size: 1.4em; font-weight: 700; font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+        .pause-btn { background: #f0ad4e; border: none; padding: 6px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; color: #333; }
+        .pause-btn:hover { background: #ec971f; }
+        
+        /* Overlay Pausa */
+        #pause-overlay { display: none; position: fixed; inset: 0; background: rgba(30,30,30,0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; color: white; }
+        #pause-overlay h1 { font-size: 3em; margin-bottom: 20px; }
+        #pause-overlay button { font-size: 1.5em; padding: 15px 40px; cursor: pointer; background: #2271b1; color: white; border: none; border-radius: 8px; }
+
+        .container { max-width: 900px; margin: 80px auto 20px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        /* Preguntas */
+        .q-block { margin-bottom: 25px; padding: 20px; border: 1px solid #dcdcde; border-radius: 8px; background: #fff; position: relative; }
+        .q-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 600; color: #2c3338; font-size: 1.1em; }
+        
+        label { display: flex; align-items: center; padding: 10px; border: 1px solid transparent; border-radius: 4px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; }
+        label:hover { background: #f6f7f7; border-color: #2271b1; }
+        input[type="radio"] { margin-right: 12px; transform: scale(1.3); accent-color: #2271b1; }
+        
+        /* Feedback Visual */
+        .btn-check { background: #2271b1; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.9em; margin-top: 10px; }
+        .btn-check:hover { background: #135e96; }
+        .btn-check:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .feedback { display: none; margin-top: 15px; padding: 12px; border-radius: 4px; font-size: 0.95em; }
+        .feedback.correct { background: #d1e7dd; color: #0f5132; border-left: 5px solid #198754; }
+        .feedback.wrong { background: #f8d7da; color: #842029; border-left: 5px solid #dc3545; }
+        
+        .opt-correct { background: #d1e7dd !important; border: 1px solid #badbcc !important; font-weight: bold; }
+        .opt-wrong { background: #f8d7da !important; text-decoration: line-through; opacity: 0.8; }
+        .blocked { pointer-events: none; }
+
+        .progress-bar { height: 6px; background: #ddd; position: fixed; top: 58px; left: 0; width: 100%; z-index: 999; }
+        .progress-fill { height: 100%; background: #2271b1; width: 0%; transition: width 0.3s; }
+
+    </style>
+</head>
+<body>
+
+<div id="pause-overlay">
+    <h1>EXAMEN PAUSADO</h1>
+    <button onclick="togglePause()">CONTINUAR</button>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="p-bar"></div></div>
+
+<div class="sticky-header">
+    <div>WordPress CEI - <span id="q-counter">0/50</span></div>
+    <div style="display:flex; align-items:center; gap:15px;">
+        <div class="timer-box" id="timer">45:00</div>
+        <button class="pause-btn" onclick="togglePause()">II PAUSA</button>
+    </div>
+</div>
+
+<div class="container">
+    <div style="text-align:center; margin-bottom:30px; border-bottom:1px solid #eee; padding-bottom:20px;">
+        <h1 style="margin:0; color:#2271b1;">Simulacro Examen Final</h1>
+        <p>Selección aleatoria de 50 preguntas del Pool Maestro (Manual + Apuntes + Criterios)</p>
+    </div>
+
+    <div id="quiz-container"></div>
+
+    <div id="final-results" style="display:none; text-align:center; padding:40px; background:#f9f9f9; border-radius:10px;">
+        <h2 id="final-score"></h2>
+        <p id="final-msg"></p>
+        <button onclick="location.reload()" style="padding:15px 30px; font-size:1.2em; background:#2271b1; color:white; border:none; cursor:pointer; border-radius:5px;">GENERAR NUEVO EXAMEN</button>
+    </div>
+</div>
+
+<script>
+/* MASTER POOL DE PREGUNTAS
+   Extraído de: Manual 2024, Apuntes Rafa Arjonilla, Criterios de Evaluación, PPTs.
+*/
+const MASTER_POOL = [
+    // --- INSTALACIÓN Y BÁSICOS ---
+    { q: "¿En qué archivo se definen el nombre de la base de datos, usuario y contraseña?", options: ["functions.php", "wp-config.php", "wp-admin.php", "header.php"], a: 1, exp: "wp-config.php es el archivo de configuración global que conecta PHP con la Base de Datos." },
+    { q: "Durante la instalación, ¿por qué se recomienda cambiar el prefijo 'wp_'?", options: ["Para mejorar el SEO", "Por seguridad (evitar inyecciones SQL)", "Para que cargue más rápido", "Es obligatorio por ley"], a: 1, exp: "Los bots atacan tablas por defecto (wp_users). Cambiarlo dificulta estos ataques." },
+    { q: "¿Qué archivo controla las redirecciones y configuración del servidor Apache?", options: ["robots.txt", "index.html", ".htaccess", "sitemap.xml"], a: 2, exp: "El .htaccess permite configurar enlaces permanentes, seguridad y redirecciones SSL." },
+    { q: "¿Qué diferencia hay entre WordPress.org y WordPress.com?", options: [".org es hosting gratuito", ".com es el software libre", ".org requiere hosting propio y da libertad total", "No hay diferencia"], a: 2, exp: "En el curso usamos .org (self-hosted) para tener control total de plugins y temas." },
+    { q: "¿Qué es LocalWP?", options: ["Un plugin de traducción", "Un entorno de desarrollo local", "Un tema de WordPress", "Un hosting en la nube"], a: 1, exp: "Permite instalar WordPress en tu ordenador sin necesidad de internet ni hosting pagado." },
+    { q: "¿Qué es un 'Blueprint' en LocalWP?", options: ["Una pantalla azul de error", "Una plantilla base reutilizable con tu configuración favorita", "El mapa del sitio", "Una copia de seguridad en la nube"], a: 1, exp: "Guarda tu stack de plugins y tema base para iniciar nuevos proyectos rápidamente." },
+    
+    // --- INTERFAZ Y AJUSTES ---
+    { q: "¿Para qué sirve la opción 'Visibilidad en los motores de búsqueda' en Ajustes de Lectura?", options: ["Para mejorar el SEO", "Para disuadir a los motores de búsqueda de indexar el sitio", "Para borrar la web de Google", "Para conectar Analytics"], a: 1, exp: "Si se marca, añade una etiqueta 'noindex' que pide a Google no mostrar la web (útil en desarrollo)." },
+    { q: "¿Qué configuración de Enlaces Permanentes es la recomendada para SEO?", options: ["Simple (?p=123)", "Día y nombre", "Nombre de la entrada (Post name)", "Numérico"], a: 2, exp: "Genera URLs limpias y semánticas que ayudan al posicionamiento." },
+    { q: "¿Dónde se cambia el título del sitio y la descripción corta?", options: ["Apariencia > Editor", "Ajustes > Generales", "Usuarios > Perfil", "Herramientas > Salud del sitio"], a: 1, exp: "Son los ajustes globales básicos de identidad del sitio." },
+    { q: "¿Qué rol de usuario puede instalar plugins y temas?", options: ["Editor", "Autor", "Administrador", "Colaborador"], a: 2, exp: "Solo el Administrador tiene capacidades de gestión técnica del sitio." },
+    { q: "¿Qué rol de usuario puede publicar sus propios posts pero NO editar los de otros?", options: ["Suscriptor", "Colaborador", "Autor", "Editor"], a: 2, exp: "El Autor gestiona su contenido. El Editor puede gestionar el de todos." },
+    { q: "¿Para qué sirve la pestaña 'Opciones de pantalla'?", options: ["Para cambiar el color del admin", "Para mostrar/ocultar cajas y columnas en el panel", "Para apagar la pantalla", "Para ver la web en móvil"], a: 1, exp: "Ubicada arriba a la derecha, personaliza qué elementos del dashboard son visibles." },
+
+    // --- CONTENIDO (ENTRADAS Y PÁGINAS) ---
+    { q: "¿Cuál es la principal diferencia entre Entradas y Páginas?", options: ["No hay diferencia", "Las Entradas son cronológicas y se categorizan; las Páginas son estáticas y jerárquicas", "Las Páginas son para el blog", "Las Entradas no admiten comentarios"], a: 1, exp: "Entradas = contenido dinámico (noticias). Páginas = contenido atemporal (Contacto, Quiénes somos)." },
+    { q: "¿Qué es el 'Extracto' (Excerpt) de una entrada?", options: ["El contenido completo", "Un resumen manual que se muestra en listados", "El título", "La URL"], a: 1, exp: "Permite controlar qué texto se muestra en el blog antes de entrar al post." },
+    { q: "¿Se pueden asignar Categorías a una Página por defecto?", options: ["Sí, siempre", "No, las páginas no tienen categorías nativamente", "Solo si es página de inicio", "Sí, si pagas"], a: 1, exp: "Las taxonomías (categorías/etiquetas) son nativas de las Entradas, no de las Páginas." },
+    { q: "¿Qué es el 'Slug'?", options: ["Un plugin de lentitud", "La parte amigable de la URL que identifica el recurso", "El nombre de la base de datos", "Un tipo de virus"], a: 1, exp: "Ej: en midominio.com/hola-mundo, 'hola-mundo' es el slug." },
+    { q: "¿Qué estado de publicación hace que una entrada sea visible solo para quien tenga la contraseña?", options: ["Privado", "Protegido con contraseña", "Borrador", "Pendiente"], a: 1, exp: "WordPress permite bloquear contenido nativamente con una clave simple." },
+
+    // --- MEDIOS E IMÁGENES ---
+    { q: "¿Cuál es el peso ideal recomendado por imagen (WPO)?", options: ["2 MB", "500 KB", "Menos de 200 KB", "No importa"], a: 2, exp: "Para no ralentizar la web, se recomienda máxima compresión (WebP, Squoosh) bajo 200KB." },
+    { q: "¿Para qué sirve el Texto Alternativo (Alt Text)?", options: ["Solo para ciegos", "Para SEO y accesibilidad (lectores de pantalla)", "Para que cargue antes", "Es el título del archivo"], a: 1, exp: "Describe la imagen a Google y a usuarios con discapacidad visual. Obligatorio por criterio técnico." },
+    { q: "¿Qué herramienta recomienda el curso para comprimir imágenes antes de subir?", options: ["Photoshop", "Paint", "Squoosh.app", "Word"], a: 2, exp: "Herramienta de Google para compresión agresiva sin pérdida visual notable." },
+    { q: "¿Qué ocurre si subes una imagen de 5000px de ancho?", options: ["Nada", "WordPress crea miniaturas, pero ocupa mucho espacio en disco innecesariamente", "Se rompe la web", "Mejora la calidad"], a: 1, exp: "Se debe escalar la imagen al tamaño máximo de uso (ej: 1920px) antes de subirla." },
+
+    // --- TEMAS Y DISEÑO ---
+    { q: "¿Qué es un Tema Hijo (Child Theme)?", options: ["Un tema pequeño", "Una plantilla que hereda del padre y permite modificar código sin perder cambios al actualizar", "Un plugin de diseño", "Una versión pirata"], a: 1, exp: "Esencial para personalizaciones avanzadas (functions.php, style.css) que perduren tras actualizar el tema padre." },
+    { q: "¿Qué archivo define los estilos CSS principales de un tema?", options: ["index.php", "style.css", "header.php", "functions.js"], a: 1, exp: "Contiene la cabecera con la información del tema y las reglas de estilo." },
+    { q: "¿Qué tema 'vacío' y ligero recomiendan los creadores de Elementor?", options: ["Twenty Twenty", "Divi", "Hello Elementor", "Astra"], a: 2, exp: "Es un tema 'lienzo' pensado para que Elementor controle todo el diseño sin conflictos." },
+    { q: "¿Dónde se gestionan los Menús en un tema clásico?", options: ["Ajustes > Menús", "Apariencia > Menús", "Plugins > Menús", "Herramientas"], a: 1, exp: "Ubicación estándar para crear y asignar menús a ubicaciones del tema." },
+    { q: "¿Qué es el Favicon?", options: ["El logo del footer", "El icono que aparece en la pestaña del navegador", "Un botón de Facebook", "El fondo de pantalla"], a: 1, exp: "Se configura en Apariencia > Personalizar > Identidad del sitio." },
+
+    // --- ELEMENTOR ---
+    { q: "¿Qué es el 'Theme Builder' de Elementor Pro?", options: ["Un constructor de temas desde cero", "Herramienta para diseñar cabeceras, pies y plantillas dinámicas (Single/Archive)", "Un plugin de seguridad", "Una galería de fotos"], a: 1, exp: "Permite salir del contenido del post y diseñar la estructura completa de la web." },
+    { q: "¿Qué diferencia hay entre Padding (Relleno) y Margin (Margen)?", options: ["Son lo mismo", "El margen es espacio interno, el relleno externo", "El relleno (padding) es espacio interno, el margen es externo", "Solo sirven para texto"], a: 2, exp: "Padding: espacio entre el borde y el contenido. Margin: espacio entre elementos." },
+    { q: "¿Para qué sirve el Z-Index?", options: ["Para el zoom", "Controla la profundidad (qué elemento está encima de otro)", "Para la transparencia", "Para el color de fondo"], a: 1, exp: "Mayor número de Z-Index = elemento más arriba (capa superior)." },
+    { q: "Si quieres que una sección ocupe todo el alto de la pantalla, ¿qué ajuste usas?", options: ["Ancho completo", "Alto mínimo: VH (Viewport Height) 100", "Padding 500px", "Margin auto"], a: 1, exp: "100 VH equivale al 100% de la altura visible del dispositivo." },
+    { q: "¿Qué es el 'Modo Responsive' en Elementor?", options: ["Un modo rápido", "Herramienta para previsualizar y ajustar el diseño en Móvil y Tablet", "Un filtro de fotos", "Un sistema de voz"], a: 1, exp: "Permite cambiar tamaños de fuente, márgenes y visibilidad según el dispositivo." },
+    { q: "¿Cómo se soluciona el problema de dos cabeceras sticky solapadas?", options: ["Borrando una", "Usando 'Offset' (Desplazamiento) en los efectos de movimiento", "Cambiando el color", "Con Z-Index negativo"], a: 1, exp: "El Offset desplaza el punto donde el elemento se vuelve pegajoso." },
+    { q: "¿Qué es un 'Global Widget'?", options: ["Un widget traducido", "Un elemento que, al editarlo, cambia en todas las partes donde esté insertado", "Un widget de mapa", "Un error de Elementor"], a: 1, exp: "Ideal para Call to Actions o formularios que se repiten idénticos en varias páginas." },
+
+    // --- WOOCOMMERCE ---
+    { q: "¿Qué tipo de producto usarías para una camiseta con tallas y colores?", options: ["Producto Simple", "Producto Variable", "Producto Agrupado", "Producto Externo"], a: 1, exp: "Permite crear variaciones donde cada combinación (Roja/L) tiene su propio stock/precio." },
+    { q: "¿Qué tipo de producto es un Ebook PDF que se envía por email?", options: ["Simple + Virtual + Descargable", "Variable", "Agrupado", "Físico"], a: 0, exp: "Virtual elimina el envío físico. Descargable habilita la subida del archivo." },
+    { q: "Si vendes productos de Amazon en tu web (afiliación), ¿qué tipo usas?", options: ["Producto Simple", "Producto Externo/Afiliado", "Producto Variable", "Producto Agrupado"], a: 1, exp: "Cambia el botón de 'Añadir al carrito' por un enlace a la web externa." },
+    { q: "¿Dónde se activan los impuestos en WooCommerce?", options: ["Se activan solos", "WooCommerce > Ajustes > General > Activar impuestos", "En cada producto", "En el tema"], a: 1, exp: "Hasta que no marcas esa casilla, la pestaña de configuración de impuestos no aparece." },
+    { q: "¿Qué es una 'Zona de Envío'?", options: ["El almacén", "Un área geográfica (ej: Canarias) con sus propios métodos y precios", "La dirección del cliente", "Un plugin de correos"], a: 1, exp: "Permite cobrar portes distintos para Península, Baleares, Europa, etc." },
+    { q: "¿Qué estado de pedido significa que el pago ha sido recibido y se debe enviar?", options: ["Pendiente de pago", "En espera", "Procesando", "Completado"], a: 2, exp: "Procesando es el estado automático tras un pago exitoso (tarjeta/Paypal)." },
+    { q: "¿Qué significa 'Ventas dirigidas' (Upsells)?", options: ["Vender algo más caro o mejor en la ficha de producto", "Vender algo complementario en el carrito", "Vender fuera de stock", "Vender por teléfono"], a: 0, exp: "Recomendar el modelo Premium cuando están viendo el modelo Básico." },
+    
+    // --- PLUGINS Y HERRAMIENTAS ---
+    { q: "¿Qué plugin de seguridad recomienda el manual para Firewall y escaneo?", options: ["Yoast SEO", "Wordfence", "Elementor", "Akismet"], a: 1, exp: "Protege contra fuerza bruta, bloquea IPs maliciosas y escanea archivos modificados." },
+    { q: "¿Qué plugin se usa para cumplir la ley de cookies (RGPD)?", options: ["GDPR Cookie Consent (o similar)", "WooCommerce", "Contact Form 7", "Classic Editor"], a: 0, exp: "Necesario para bloquear cookies hasta que el usuario acepte explícitamente." },
+    { q: "¿Para qué sirve el plugin 'Loco Translate'?", options: ["Para traducir la web automáticamente", "Para traducir cadenas de texto internas de temas y plugins", "Para poner la web en chino", "Para mover la web"], a: 1, exp: "Permite crear archivos .po/.mo directamente desde el admin para traducir palabras como 'Read more'." },
+    { q: "¿Qué plugin es el estándar para migraciones y backups sencillos?", options: ["All-in-One WP Migration", "Jetpack", "Hello Dolly", "Smush"], a: 0, exp: "Exporta todo el sitio a un solo archivo para importarlo en otro lugar." },
+    { q: "¿Qué hace 'Contact Form 7'?", options: ["Crea formularios de contacto mediante shortcodes", "Crea tiendas online", "Optimiza imágenes", "Es un tema"], a: 0, exp: "Uno de los plugins de formularios más antiguos y populares." },
+    { q: "¿Qué es un Shortcode?", options: ["Un código corto [ejemplo] que invoca una funcionalidad", "Un error de PHP", "Un enlace corto", "Una contraseña"], a: 0, exp: "WordPress los usa para incrustar galerías, formularios o productos en el contenido." },
+
+    // --- SEO Y LEGALIDAD ---
+    { q: "¿Qué es el archivo robots.txt?", options: ["Un virus", "Un archivo de texto que dice a los buscadores qué pueden o no rastrear", "Un plugin de SEO", "El sitemap"], a: 1, exp: "Instrucciones de acceso para los bots de Google." },
+    { q: "¿Qué requisito legal deben cumplir TODOS los formularios de contacto?", options: ["Pedir el teléfono", "Tener un Checkbox de aceptación de privacidad NO pre-marcado", "Tener captcha", "Ser de color azul"], a: 1, exp: "El RGPD exige consentimiento explícito e informado (primera capa de información)." },
+    { q: "¿Qué página es obligatoria por ley tener visible?", options: ["Blog", "Política de Privacidad", "Galería", "Equipo"], a: 1, exp: "Debes informar sobre quién eres, qué datos recoges y para qué." },
+    { q: "¿Qué metaetiqueta evita que una página salga en Google?", options: ["index", "noindex", "follow", "open"], a: 1, exp: "Le dice al bot 'puedes leer esto, pero no lo guardes en tus resultados'." },
+    
+    // --- CRITERIOS DE EVALUACIÓN Y PROYECTO ---
+    { q: "Según los criterios, ¿está permitido usar 'Lorem Ipsum' en el proyecto final?", options: ["Sí, en todas partes", "No, está prohibido el texto ficticio", "Solo en el blog", "Depende del profesor"], a: 1, exp: "Criterio 1.1: Originalidad. El contenido debe ser real o realista, no simulado." },
+    { q: "¿Cuántas horas mínimas de dedicación exige el proyecto?", options: ["10 horas", "40 horas", "100 horas", "20 horas"], a: 1, exp: "Equivale a 5 días a jornada completa." },
+    { q: "¿Qué documentos se deben entregar obligatoriamente?", options: ["Solo la URL", "Memoria PDF, archivo de exportación (backup) y capturas", "Solo el backup", "Un video de TikTok"], a: 1, exp: "Sin la Memoria o el archivo .wpress (o similar), el proyecto no se evalúa." },
+    { q: "¿Qué es obligatorio usar si el proyecto es un Portfolio o Corporativo?", options: ["WooCommerce", "Custom Post Types (CPT)", "Solo páginas estáticas", "Un tema gratuito"], a: 1, exp: "Para mostrar Proyectos, Servicios o Empleados de forma dinámica y escalable." },
+    { q: "¿Qué ocurre si suspendes el proyecto y el examen 4 veces?", options: ["Nada, pagas más", "Pierdes el derecho a la obtención del diploma", "Te regalan el curso", "Repites gratis"], a: 1, exp: "Es el límite máximo de convocatorias según el Sistema de Evaluación." },
+    { q: "¿Qué plazo hay para pagar una convocatoria extraordinaria?", options: ["El día del examen", "72 horas antes de la entrega", "Una semana después", "No se paga"], a: 1, exp: "Debe abonarse a través de alumnos.cei.es antes de la fecha límite." },
+
+    // --- CONCEPTOS TÉCNICOS ---
+    { q: "¿Qué significa CMS?", options: ["Code Master System", "Content Management System (Gestor de Contenidos)", "Cascading Main Style", "Computer Made Simple"], a: 1, exp: "WordPress es el CMS más usado del mundo." },
+    { q: "¿Qué es el 'Mobile First'?", options: ["Comprar el móvil primero", "Filosofía de diseño que prioriza la versión móvil antes que la de escritorio", "Un plugin de Apple", "Google penaliza los móviles"], a: 1, exp: "Dado que el tráfico móvil supera al de escritorio, se diseña pensando en pantallas pequeñas primero." },
+    { q: "¿Qué es un error 404?", options: ["Servidor no encontrado", "Página no encontrada", "Error de base de datos", "Pago requerido"], a: 1, exp: "El enlace está roto o la URL ha cambiado." },
+    { q: "¿Qué es HTTPS?", options: ["Versión insegura de HTTP", "Protocolo seguro con cifrado SSL/TLS", "Un dominio", "Un hosting"], a: 1, exp: "La 'S' indica seguridad. Es factor de ranking y confianza." },
+    { q: "¿Qué es una 'Miga de pan' (Breadcrumb)?", options: ["Restos de comida", "Rastro de navegación (Inicio > Tienda > Zapatos)", "Un menú footer", "Un widget de búsqueda"], a: 1, exp: "Mejora la UX y el SEO interno." },
+    { q: "¿Qué es el Gutenberg?", options: ["Un plugin antiguo", "El editor de bloques nativo de WordPress desde la versión 5.0", "Un tema alemán", "Un hosting"], a: 1, exp: "Sistema basado en bloques para maquetar contenido sin código." },
+    { q: "¿Qué es un CPT (Custom Post Type)?", options: ["Un tipo de post personalizado (ej: Inmuebles, Recetas)", "Un plugin de caché", "Un tipo de pago", "Un usuario"], a: 0, exp: "Extiende WordPress más allá de 'Entradas' y 'Páginas' para contenidos específicos." },
+    { q: "¿Qué hook de WordPress se encuentra justo antes del cierre de </body>?", options: ["wp_head", "wp_footer", "wp_content", "wp_admin"], a: 1, exp: "Lugar donde cargan los scripts de JavaScript y la barra de administración." },
+    { q: "¿Qué es la 'Pantalla Blanca de la Muerte' (WSOD)?", options: ["El final del juego", "Un error crítico (PHP/Memoria) que deja la web en blanco sin mensaje", "El diseño minimalista", "Un virus"], a: 1, exp: "Suele deberse a incompatibilidad de plugins o temas." },
+    { q: "¿Cómo se llama la tabla de la base de datos que guarda la configuración general?", options: ["wp_posts", "wp_options", "wp_users", "wp_config"], a: 1, exp: "Guarda la URL del sitio, el correo del admin, y ajustes de plugins." },
+    
+    // --- AVANZADO / TRUCOS ---
+    { q: "¿Qué atajo de teclado abre el 'Finder' o buscador rápido en Elementor?", options: ["Ctrl + S", "Ctrl + E (o Cmd + E)", "Ctrl + Z", "Alt + F4"], a: 1, exp: "Permite navegar entre páginas o ajustes sin salir del editor." },
+    { q: "¿Qué es el 'Navigator' en Elementor?", options: ["El navegador Chrome", "Un panel de capas (árbol de estructura) para ver secciones y columnas", "El mapa", "La ayuda"], a: 1, exp: "Vital para seleccionar elementos difíciles de cliquear o mover secciones enteras." },
+    { q: "¿Para qué sirve el Historial en Elementor?", options: ["Para ver webs visitadas", "Para deshacer cambios recientes (Ctrl+Z) y ver revisiones guardadas", "Para borrar caché", "No existe"], a: 1, exp: "Salva vidas cuando cometes un error en el diseño." },
+    { q: "¿Qué son los 'Global Colors'?", options: ["Colores del mundo", "Variables de color que, si cambias una vez, actualizan toda la web", "Colores prohibidos", "Fondos de pantalla"], a: 1, exp: "Parte del Sistema de Diseño para mantener consistencia visual." },
+    { q: "Si usas un plugin de caché, ¿qué debes hacer si haces cambios en el CSS y no se ven?", options: ["Reinstalar WordPress", "Borrar/Purgar la caché", "Cambiar de tema", "Esperar 24 horas"], a: 1, exp: "El navegador o el servidor están sirviendo una versión antigua guardada." },
+    { q: "¿Qué archivo PHP se comporta como un plugin dentro del tema?", options: ["header.php", "footer.php", "functions.php", "style.css"], a: 2, exp: "Permite añadir snippets de código (hooks, filtros) específicos para ese tema." },
+    { q: "¿Qué es 'Lazy Load'?", options: ["Carga lenta (negativo)", "Carga diferida de imágenes (solo cargan cuando el usuario hace scroll)", "Un plugin pesado", "Cargar todo al principio"], a: 1, exp: "Mejora drásticamente la velocidad de carga inicial." },
+    { q: "En WooCommerce, ¿qué son los Atributos?", options: ["Las características del producto (Color, Talla) usadas para crear variaciones", "El precio", "La foto", "El stock"], a: 0, exp: "Primero defines el atributo y sus términos, luego generas las variaciones." },
+    { q: "¿Se puede usar el método de pago 'Contrareembolso' en el proyecto?", options: ["No, nunca", "Sí, se permite", "Solo si es real", "Solo con PayPal"], a: 1, exp: "Según los criterios técnicos, es un método válido para simular compras sin tarjeta." },
+    { q: "¿Cuál es la resolución estándar de referencia para diseño Desktop?", options: ["800x600", "1920x1080 (Full HD)", "4000px", "1024px"], a: 1, exp: "Es el lienzo base sobre el que solemos trabajar en Elementor." },
+    { q: "¿Qué es un 'Snippet'?", options: ["Un corte de pelo", "Un fragmento pequeño de código reutilizable", "Un plugin grande", "Un tema"], a: 1, exp: "Pequeños trozos de PHP/CSS que añaden funciones específicas." },
+    { q: "¿Qué diferencia hay entre una Copia de Seguridad y una Exportación XML?", options: ["Ninguna", "La copia (Backup) guarda archivos y base de datos completa; el XML solo contenido (texto)", "El XML es mejor", "La copia es solo fotos"], a: 1, exp: "Para restaurar una web rota necesitas un Backup completo (archivos + DB)." },
+    { q: "¿Qué es el 'Responsive Breakpoint' (Punto de ruptura)?", options: ["Cuando la web se rompe", "El ancho de píxeles donde el diseño cambia de PC a Tablet o Móvil", "Un error de código", "El footer"], a: 1, exp: "Ej: A los 768px el menú se convierte en hamburguesa." },
+    { q: "¿Qué significa que un tema sea 'Code Accessible'?", options: ["Que es gratis", "Que cumple estándares para ser usado por código o herramientas de accesibilidad", "Que es difícil", "Que es azul"], a: 1, exp: "Facilita la lectura del código fuente por desarrolladores y máquinas." }
+];
+
+/* Lógica del Examen */
+let currentQuestions = [];
+let userAnswers = {};
+let timerInterval;
+let timeRemaining = 45 * 60;
+let isPaused = false;
+
+function initExam() {
+    // 1. Seleccionar 50 preguntas aleatorias del MASTER_POOL
+    const shuffled = [...MASTER_POOL].sort(() => 0.5 - Math.random());
+    currentQuestions = shuffled.slice(0, 50); // Tomamos 50
+    
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+
+    currentQuestions.forEach((item, index) => {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'q-block';
+        qDiv.id = `q-${index}`;
+        
+        let optionsHTML = '';
+        item.options.forEach((opt, optIndex) => {
+            optionsHTML += `
+                <label id="lbl-${index}-${optIndex}">
+                    <input type="radio" name="q${index}" value="${optIndex}">
+                    ${opt}
+                </label>
+            `;
+        });
+
+        qDiv.innerHTML = `
+            <div class="q-header">
+                <span>Pregunta ${index + 1}</span>
+            </div>
+            <div style="font-weight:500; margin-bottom:15px; font-size:1.05em;">${item.q}</div>
+            <div class="options-area">${optionsHTML}</div>
+            <button class="btn-check" onclick="checkAnswer(${index}, ${item.a})">Comprobar Respuesta</button>
+            <div class="feedback" id="feed-${index}"></div>
+        `;
+        container.appendChild(qDiv);
+    });
+
+    startTimer();
+    updateCounter();
+}
+
+function checkAnswer(qIndex, correctIndex) {
+    const selected = document.querySelector(`input[name="q${qIndex}"]:checked`);
+    const btn = document.querySelector(`#q-${qIndex} .btn-check`);
+    const feedback = document.getElementById(`feed-${qIndex}`);
+    const labels = document.querySelectorAll(`#q-${qIndex} label`);
+    
+    if (!selected) return alert("Por favor, selecciona una opción.");
+
+    // Bloquear
+    labels.forEach(l => {
+        l.classList.add('blocked');
+        l.querySelector('input').disabled = true;
+    });
+    btn.disabled = true;
+    btn.textContent = "Revisado";
+
+    const userVal = parseInt(selected.value);
+    userAnswers[qIndex] = (userVal === correctIndex);
+
+    // Mostrar Corrección
+    const correctLabel = document.getElementById(`lbl-${qIndex}-${correctIndex}`);
+    correctLabel.classList.add('opt-correct');
+
+    if (userVal === correctIndex) {
+        feedback.className = "feedback correct";
+        feedback.innerHTML = `<strong>¡Correcto!</strong> <br> ${currentQuestions[qIndex].exp}`;
+    } else {
+        const wrongLabel = document.getElementById(`lbl-${qIndex}-${userVal}`);
+        wrongLabel.classList.add('opt-wrong');
+        feedback.className = "feedback wrong";
+        feedback.innerHTML = `<strong>Incorrecto.</strong> La correcta era la marcada en verde. <br> <em>Explicación: ${currentQuestions[qIndex].exp}</em>`;
+    }
+    feedback.style.display = "block";
+    updateProgress();
+    
+    // Auto-scroll suave si es la última
+    if(Object.keys(userAnswers).length === 50) finishExam();
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        if(!isPaused) {
+            timeRemaining--;
+            let m = Math.floor(timeRemaining / 60);
+            let s = timeRemaining % 60;
+            document.getElementById('timer').textContent = `${m}:${s < 10 ? '0'+s : s}`;
+            
+            if (timeRemaining <= 0) finishExam();
+        }
+    }, 1000);
+}
+
+function togglePause() {
+    isPaused = !isPaused;
+    document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
+}
+
+function updateProgress() {
+    const answered = Object.keys(userAnswers).length;
+    const percent = (answered / 50) * 100;
+    document.getElementById('p-bar').style.width = percent + '%';
+    document.getElementById('q-counter').textContent = `${answered}/50`;
+}
+
+function finishExam() {
+    clearInterval(timerInterval);
+    const score = Object.values(userAnswers).filter(v => v === true).length;
+    const finalNote = (score / 50) * 10;
+    
+    const resultsDiv = document.getElementById('final-results');
+    const msg = document.getElementById('final-msg');
+    const scoreTitle = document.getElementById('final-score');
+    
+    resultsDiv.style.display = 'block';
+    scoreTitle.textContent = `Nota: ${finalNote.toFixed(1)} / 10`;
+    
+    if (finalNote >= 5) {
+        scoreTitle.style.color = "#198754";
+        msg.innerHTML = "¡ENHORABUENA! Estás listo para el examen real.";
+    } else {
+        scoreTitle.style.color = "#dc3545";
+        msg.innerHTML = "Necesitas repasar un poco más los conceptos teóricos.";
+    }
+    
+    window.scrollTo(0, document.body.scrollHeight);
+    // Deshabilitar botones restantes
+    document.querySelectorAll('.btn-check').forEach(b => b.disabled = true);
+}
+
+// Arrancar
+initExam();
+
+</script>
+</body>
+</html>
